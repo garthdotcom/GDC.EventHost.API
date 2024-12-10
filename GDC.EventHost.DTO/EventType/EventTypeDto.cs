@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GDC.EventHost.DTO.EventType
 {
@@ -8,9 +7,9 @@ namespace GDC.EventHost.DTO.EventType
         public Guid Id { get; set; }
 
         [Display(Name = "Name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Display(Name = "Description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }

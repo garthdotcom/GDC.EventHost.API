@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GDC.EventHost.DTO.Series
+namespace GDC.EventHost.DTO.Series.ValidationAttributes
 {
     public class EndDateMustBeLaterThanStartDate : ValidationAttribute
     {
@@ -13,9 +13,8 @@ namespace GDC.EventHost.DTO.Series
                 if (series.StartDate > series.EndDate)
                 {
                     ErrorMessage = "If you enter an end date, it should be later than the start date.";
-                    return new ValidationResult(ErrorMessage,
-                        new[] { nameof(SeriesForUpdateDto) });
-                } 
+                    return new ValidationResult(ErrorMessage, [nameof(SeriesForUpdateDto)]);
+                }
             }
 
             return ValidationResult.Success;

@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace GDC.EventHost.DTO.Series
+namespace GDC.EventHost.DTO.Series.ValidationAttributes
 {
     public class StartDateMustBeFuture : ValidationAttribute
     {
@@ -14,15 +13,13 @@ namespace GDC.EventHost.DTO.Series
             if (!dateIsValid)
             {
                 ErrorMessage = "You should enter a valid date for your start date.";
-                return new ValidationResult(ErrorMessage,
-                    new[] { nameof(SeriesForUpdateDto) });
+                return new ValidationResult(ErrorMessage, [nameof(SeriesForUpdateDto)]);
             }
 
             if (parsedDate < DateTime.Now)
             {
                 ErrorMessage = "You should enter a start date that is in the future.";
-                return new ValidationResult(ErrorMessage,
-                    new[] { nameof(SeriesForUpdateDto) });
+                return new ValidationResult(ErrorMessage, [nameof(SeriesForUpdateDto)]);
             }
 
             return ValidationResult.Success;

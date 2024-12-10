@@ -9,13 +9,13 @@ namespace GDC.EventHost.DTO.Event
         public Guid Id { get; set; }
 
         [Display(Name = "Date")]
-        public DateTime Date { get; set; }
+        public required DateTime Date { get; set; }
 
         [Display(Name = "Event Type")]
-        public Guid EventTypeId { get; set; }
+        public required Guid EventTypeId { get; set; }
 
         [Display(Name = "Status")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
+        public required StatusEnum StatusId { get; set; }
 
         [Display(Name = "Event Summary")]
         public Guid? EventSummaryId { get; set; }
@@ -28,6 +28,6 @@ namespace GDC.EventHost.DTO.Event
 
         //****************
 
-        public List<TicketDto> Tickets{ get; set; } = new List<TicketDto>();
+        public List<TicketDto> Tickets { get; set; } = [];
     }
 }

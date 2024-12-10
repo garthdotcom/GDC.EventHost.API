@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GDC.EventHost.DTO.Event
+﻿namespace GDC.EventHost.DTO.Event
 {
     public class EventTicketCount
     {

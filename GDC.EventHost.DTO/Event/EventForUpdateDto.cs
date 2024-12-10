@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.Event
@@ -10,23 +9,23 @@ namespace GDC.EventHost.DTO.Event
 
         [Display(Name = "Date")]
         [Required(ErrorMessage = "You should enter an Event Date.")]
-        public DateTime Date { get; set; }
+        public required DateTime Date { get; set; }
 
         [Display(Name = "Type")]
         [Required(ErrorMessage = "You should enter an Event Type.")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
             ErrorMessage = "The Event Type Id must be a valid Guid.")]
-        public Guid EventTypeId { get; set; }
+        public required Guid EventTypeId { get; set; }
 
         [Display(Name = "Status")]
         [Required(ErrorMessage = "You should enter a Status.")]
-        public StatusEnum StatusId { get; set; }
+        public required StatusEnum StatusId { get; set; }
 
         [Display(Name = "Event")]
         [Required(ErrorMessage = "You should enter an Event Summary.")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
             ErrorMessage = "The Event Summary Id must be a valid Guid.")]
-        public Guid EventSummaryId { get; set; }
+        public required Guid EventSummaryId { get; set; }
 
         [Display(Name = "Venue")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
