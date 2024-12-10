@@ -2,7 +2,25 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // if the value in the caller's accept-header is not one we support,
+    // return a Not Acceptable status code
+    options.ReturnHttpNotAcceptable = true;
+}).AddXmlDataContractSerializerFormatters();    // we support xml if requested
+
+// provide more error details
+//builder.Services.AddProblemDetails(options =>
+//{
+//    options.CustomizeProblemDetails = ctx =>
+//    {
+//        ctx.ProblemDetails.Extensions
+//            .Add("additionalInformation", "Additional information example.");
+//        ctx.ProblemDetails.Extensions
+//            .Add("server", Environment.MachineName);
+//    };
+//});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -18,8 +36,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints => { 
+    endpoints.MapControllers(); });
 
 app.Run();
