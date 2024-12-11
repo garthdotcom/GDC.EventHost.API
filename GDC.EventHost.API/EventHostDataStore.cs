@@ -6,8 +6,8 @@ namespace GDC.EventHost.API
 {
     public class EventHostDataStore
     {
-        public List<EventDetailDto> Events { get; set; }
-        public List<PerformanceDetailDto> Performances { get; set; }
+        public List<EventDto> Events { get; set; }
+        public List<PerformanceDto> Performances { get; set; }
 
         public static EventHostDataStore Current { get; } = new EventHostDataStore();
 
@@ -30,9 +30,9 @@ namespace GDC.EventHost.API
             var venue3Id = Guid.NewGuid();
 
             // init dummy data
-            Events = new List<EventDetailDto>()
+            Events = new List<EventDto>()
             {
-                new EventDetailDto()
+                new EventDto()
                 {
                     Id = event1Id,
                     Description = "This is Event One",
@@ -50,9 +50,7 @@ namespace GDC.EventHost.API
                             EventId = event1Id,
                             PerformanceTypeId = performanceTypeId,
                             StatusId = Enums.StatusEnum.Pending,
-                            VenueId = venue1Id,
-                            SeatingPlanId = null,
-                            PerformanceTitle = "Performance One for Event One"
+                            VenueId = venue1Id
                         },
                         new ()
                         {
@@ -61,9 +59,7 @@ namespace GDC.EventHost.API
                             EventId = event1Id,
                             PerformanceTypeId = performanceTypeId,
                             StatusId = Enums.StatusEnum.Pending,
-                            VenueId = venue1Id,
-                            SeatingPlanId = null,
-                            PerformanceTitle = "Performance Two for Event One"
+                            VenueId = venue1Id
                         },
                         new ()
                         {
@@ -72,13 +68,11 @@ namespace GDC.EventHost.API
                             EventId = event1Id,
                             PerformanceTypeId = performanceTypeId,
                             StatusId = Enums.StatusEnum.Pending,
-                            VenueId = venue1Id,
-                            SeatingPlanId = null,
-                            PerformanceTitle = "Performance Three for Event One"
+                            VenueId = venue1Id
                         }
                     ]
                 },
-                new EventDetailDto()
+                new EventDto()
                 {
                     Id = event2Id,
                     Description = "This is Event Two",
@@ -96,9 +90,7 @@ namespace GDC.EventHost.API
                             EventId = event2Id,
                             PerformanceTypeId = performanceTypeId,
                             StatusId = Enums.StatusEnum.Pending,
-                            VenueId = venue2Id,
-                            SeatingPlanId = null,
-                            PerformanceTitle = "Performance One for Event Two"
+                            VenueId = venue2Id
                         },
                         new ()
                         {
@@ -107,13 +99,11 @@ namespace GDC.EventHost.API
                             EventId = event2Id,
                             PerformanceTypeId = performanceTypeId,
                             StatusId = Enums.StatusEnum.Pending,
-                            VenueId = venue3Id,
-                            SeatingPlanId = null,
-                            PerformanceTitle = "Performance Two for Event Two"
+                            VenueId = venue3Id
                         }
                     ]
                 },
-                new EventDetailDto()
+                new EventDto()
                 {
                     Id = event3Id,
                     Description = "This is Event Three",
@@ -131,9 +121,7 @@ namespace GDC.EventHost.API
                             EventId = event3Id,
                             PerformanceTypeId = performanceTypeId,
                             StatusId = Enums.StatusEnum.Pending,
-                            VenueId = venue3Id,
-                            SeatingPlanId = null,
-                            PerformanceTitle = "Performance One for Event Three"
+                            VenueId = venue3Id
                         }
                     ]
                 }

@@ -4,8 +4,6 @@ namespace GDC.EventHost.DTO.PerformanceType
 {
     public class PerformanceTypeForUpdateDto
     {
-        public Guid Id { get; set; }
-
         [Display(Name = "Name")]
         [Required(ErrorMessage = "You should enter a Name.")]
         [MaxLength(150, ErrorMessage = "The Performance Type Name should not be longer than 150 characters.")]

@@ -7,7 +7,8 @@ builder.Services.AddControllers(options =>
     // if the value in the caller's accept-header is not one we support,
     // return a Not Acceptable status code
     options.ReturnHttpNotAcceptable = true;
-}).AddXmlDataContractSerializerFormatters();    // we support xml if requested
+}).AddNewtonsoftJson()
+.AddXmlDataContractSerializerFormatters();    // we support xml if requested
 
 // provide more error details
 //builder.Services.AddProblemDetails(options =>

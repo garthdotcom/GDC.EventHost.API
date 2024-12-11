@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GDC.EventHost.DTO.Series.ValidationAttributes
+namespace GDC.EventHost.DTO.Event.ValidationAttributes
 {
     public class EndDateMustBeLaterThanStartDate : ValidationAttribute
     {
@@ -8,24 +8,24 @@ namespace GDC.EventHost.DTO.Series.ValidationAttributes
         {
             try
             {
-                var series = (SeriesForUpdateDto)validationContext.ObjectInstance;
+                var theEvent = (EventForUpdateDto)validationContext.ObjectInstance;
 
-                if (series.StartDate == null && series.StartDate == null)
+                if (theEvent.StartDate == null && theEvent.StartDate == null)
                 {
                     // Allow both to be null
                     return ValidationResult.Success;
                 }
 
-                if (series.StartDate != null && series.EndDate != null)
+                if (theEvent.StartDate != null && theEvent.EndDate != null)
                 {
-                    if (series.StartDate > series.EndDate)
+                    if (theEvent.StartDate > theEvent.EndDate)
                     {
                         ErrorMessage = "The end date should be later than or the same as the start date.";
                     }
-                    else if (series.StartDate == series.EndDate)
+                    else if (theEvent.StartDate == theEvent.EndDate)
                     {
-                        // Series takes place on one day, verify the times
-                        if (series.EndDate.Value.TimeOfDay < series.StartDate.Value.TimeOfDay)
+                        // Event takes place on one day, verify the times
+                        if (theEvent.EndDate.Value.TimeOfDay < theEvent.StartDate.Value.TimeOfDay)
                         {
                             ErrorMessage = "The end time should be later than the start time.";
                         }
@@ -34,17 +34,17 @@ namespace GDC.EventHost.DTO.Series.ValidationAttributes
                 else
                 {
                     // Either start date or end date is null; not allowed
-                    ErrorMessage = "Please enter a valid date range for the series.";
+                    ErrorMessage = "Please enter a valid date range for the event.";
                 }
 
                 return (string.IsNullOrEmpty(ErrorMessage)) 
                     ? ValidationResult.Success 
-                    : new ValidationResult(ErrorMessage, [nameof(SeriesForUpdateDto)]);
+                    : new ValidationResult(ErrorMessage, [nameof(EventForUpdateDto)]);
             }
             catch 
             {
-                ErrorMessage = "An error occurred validating series start and end dates.";
-                return new ValidationResult(ErrorMessage, [nameof(SeriesForUpdateDto)]);
+                ErrorMessage = "An error occurred validating event start and end dates.";
+                return new ValidationResult(ErrorMessage, [nameof(EventForUpdateDto)]);
             }
         }
     }

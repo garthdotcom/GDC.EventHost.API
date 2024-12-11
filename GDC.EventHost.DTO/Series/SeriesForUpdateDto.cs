@@ -14,7 +14,6 @@ namespace GDC.EventHost.DTO.Series
         public required string Name { get; set; }
 
         [Display(Name = "Description")]
-        [Required(ErrorMessage = "You should enter a description.")]
         [MaxLength(250, ErrorMessage = "The description should not be longer than 250 characters.")]
         public string Description { get; set; } = string.Empty;
 
@@ -24,15 +23,13 @@ namespace GDC.EventHost.DTO.Series
 
         [Display(Name = "Start Date")]
         [StartDateMustBeFuture]
-        [Required(ErrorMessage = "You should enter a start date.")]
-        public required DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [Display(Name = "End Date")]
         [EndDateMustBeLaterThanStartDate]
         public DateTime? EndDate { get; set; }
 
-        [Display(Name = "Status")]
-        [Required(ErrorMessage = "You should enter a status.")]
-        public required StatusEnum StatusId { get; set; }
+        [Display(Name = "Status Id")]
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
     }
 }

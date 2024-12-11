@@ -2,8 +2,8 @@
 {
     public class PerformanceTicketCount
     {
-        public Guid PerformanceId { get; set; }
-        public int TotalTickets { get; set; }
-        public int RemainingTickets { get; set; }
+        public required Guid PerformanceId { get; set; }
+        public required int TotalTickets { get; set; }
+        public required int RemainingTickets { get; set; }
     }
 }

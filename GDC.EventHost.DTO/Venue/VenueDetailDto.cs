@@ -20,7 +20,7 @@ namespace GDC.EventHost.DTO.Venue
         public string LongDescription { get; set; } = string.Empty;
 
         [Display(Name = "Status")]
-        public required StatusEnum StatusId { get; set; }
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
 
         [Display(Name = "Status Value")]
         public string StatusValue { get; set; } = string.Empty;

@@ -5,15 +5,12 @@ namespace GDC.EventHost.DTO.Venue
 {
     public class VenueForUpdateDto
     {
-        public Guid Id { get; set; }
-
         [Display(Name = "Name")]
         [Required(ErrorMessage = "You should enter a Name.")]
         [MaxLength(150, ErrorMessage = "The Name should not be longer than 150 characters.")]
         public required string Name { get; set; }
 
         [Display(Name = "Description")]
-        [Required(ErrorMessage = "You should enter a Description.")]
         [MaxLength(250, ErrorMessage = "The Description should not be longer than 250 characters.")]
         public string Description { get; set; } = string.Empty;
 
@@ -22,7 +19,6 @@ namespace GDC.EventHost.DTO.Venue
         public string LongDescription { get; set; } = string.Empty;
 
         [Display(Name = "Status")]
-        [Required(ErrorMessage = "You should enter a Status.")]
-        public required StatusEnum StatusId { get; set; }
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
     }
 }

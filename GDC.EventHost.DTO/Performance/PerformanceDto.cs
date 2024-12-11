@@ -5,24 +5,27 @@ namespace GDC.EventHost.DTO.Performance
 {
     public class PerformanceDto
     {
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
 
         [Display(Name = "Date")]
         public required DateTime Date { get; set; }
 
-        [Display(Name = "Performance Type")]
+        [Display(Name = "Title")]
+        public string Title { get; set; } = string.Empty;
+
+        [Display(Name = "Performance Type Id")]
         public required Guid PerformanceTypeId { get; set; }
 
-        [Display(Name = "Status")]
+        [Display(Name = "Status Id")]
         public required StatusEnum StatusId { get; set; }
 
-        [Display(Name = "Event")]
-        public Guid? EventId { get; set; }
+        [Display(Name = "Event Id")]
+        public required Guid EventId { get; set; }
 
-        [Display(Name = "Venue")]
+        [Display(Name = "Venue Id")]
         public Guid? VenueId { get; set; }
 
-        [Display(Name = "SeatingPlan")]
+        [Display(Name = "Seating Plan Id")]
         public Guid? SeatingPlanId { get; set; }
     }
 }

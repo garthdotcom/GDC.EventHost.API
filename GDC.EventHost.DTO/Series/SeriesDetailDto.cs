@@ -19,7 +19,7 @@ namespace GDC.EventHost.DTO.Series
         public string LongDescription { get; set; } = string.Empty;
 
         [Display(Name = "Start Date")]
-        public required DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [Display(Name = "End Date")]
         public DateTime? EndDate { get; set; }
@@ -28,7 +28,7 @@ namespace GDC.EventHost.DTO.Series
         public StatusEnum StatusId { get; set; }
 
         [Display(Name = "Status Value")]
-        public required string StatusValue { get; set; }
+        public string StatusValue { get; set; } = string.Empty;
 
         public List<EventDto> Events { get; set; } = [];
 
