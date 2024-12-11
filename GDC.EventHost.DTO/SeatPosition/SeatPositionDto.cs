@@ -1,5 +1,4 @@
-﻿using System;
-using static GDC.EventHost.DTO.Enums;
+﻿using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.SeatPosition
 {
@@ -10,7 +9,7 @@ namespace GDC.EventHost.DTO.SeatPosition
         // section, row
         public SeatPositionTypeEnum SeatPositionTypeId { get; set; }
 
-        public string DisplayValue { get; set; }
+        public string DisplayValue { get; set; } = string.Empty;
 
         public int OrdinalValue { get; set; }
 

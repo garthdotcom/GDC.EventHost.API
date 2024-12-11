@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static GDC.EventHost.DTO.Enums;
+﻿using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.Order
 {
@@ -12,11 +10,10 @@ namespace GDC.EventHost.DTO.Order
 
         public OrderStatusEnum OrderStatusId { get; set; }
 
-        public string OrderStatusValue { get; set; }
+        public string OrderStatusValue { get; set; } = string.Empty;
 
         public DateTime Date { get; set; }
 
-        public List<OrderItemDto> OrderItems { get; set; }
-            = new List<OrderItemDto>();
+        public List<OrderItemDto> OrderItems { get; set; } = [];
     }
 }

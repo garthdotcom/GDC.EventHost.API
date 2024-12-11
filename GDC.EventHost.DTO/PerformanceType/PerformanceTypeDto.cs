@@ -1,9 +1,8 @@
-﻿using GDC.EventHost.DTO.Event;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace GDC.EventHost.DTO.EventType
+namespace GDC.EventHost.DTO.PerformanceType
 {
-    public class EventTypeDetailDto
+    public class PerformanceTypeDto
     {
         public Guid Id { get; set; }
 
@@ -12,7 +11,5 @@ namespace GDC.EventHost.DTO.EventType
 
         [Display(Name = "Description")]
         public string Description { get; set; } = string.Empty;
-
-        public List<EventDetailDto> Events { get; set; } = [];
     }
 }

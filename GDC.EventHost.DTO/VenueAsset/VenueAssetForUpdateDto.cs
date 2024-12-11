@@ -1,18 +1,17 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
-namespace GDC.EventHost.DTO.Asset
+namespace GDC.EventHost.DTO.VenueAsset
 {
-    public class EventAssetForUpdateDto
+    public class VenueAssetForUpdateDto
     {
         public Guid Id { get; set; }
 
-        [Display(Name = "Event")]
-        [Required(ErrorMessage = "You should enter a Event Id.")]
+        [Display(Name = "Venue")]
+        [Required(ErrorMessage = "You should enter a Venue Id.")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
-            ErrorMessage = "The Event Id must be a valid Guid.")]
-        public Guid EventId { get; set; }
+            ErrorMessage = "The Venue Id must be a valid Guid.")]
+        public Guid VenueId { get; set; }
 
         [Display(Name = "Asset")]
         [Required(ErrorMessage = "You should enter an Asset Id.")]

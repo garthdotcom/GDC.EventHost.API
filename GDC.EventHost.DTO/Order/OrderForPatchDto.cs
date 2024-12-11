@@ -1,5 +1,4 @@
-﻿using System;
-using static GDC.EventHost.DTO.Enums;
+﻿using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.Order
 {

@@ -1,18 +1,17 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
-namespace GDC.EventHost.DTO.Asset
+namespace GDC.EventHost.DTO.SeriesAsset
 {
-    public class EventSummaryAssetForUpdateDto
+    public class SeriesAssetForUpdateDto
     {
         public Guid Id { get; set; }
 
-        [Display(Name = "Event Summary")]
-        [Required(ErrorMessage = "You should enter an Event Summary Id.")]
+        [Display(Name = "Series")]
+        [Required(ErrorMessage = "You should enter a Series Id.")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
-            ErrorMessage = "The Event Summary Id must be a valid Guid.")]
-        public Guid EventSummaryId { get; set; }
+            ErrorMessage = "The Series Id must be a valid Guid.")]
+        public Guid SeriesId { get; set; }
 
         [Display(Name = "Asset")]
         [Required(ErrorMessage = "You should enter an Asset Id.")]

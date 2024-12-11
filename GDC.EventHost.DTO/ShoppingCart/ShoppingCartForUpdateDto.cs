@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GDC.EventHost.DTO.ShoppingCart
 {
@@ -11,6 +9,6 @@ namespace GDC.EventHost.DTO.ShoppingCart
         [Required]
         public Guid MemberId { get; set; }
 
-        public List<ShoppingCartItemForUpdateDto> ShoppingCartItems { get; set; }
+        public List<ShoppingCartItemForUpdateDto> ShoppingCartItems { get; set; } = [];
     }
 }

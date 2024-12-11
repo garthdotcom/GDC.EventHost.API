@@ -1,6 +1,6 @@
-﻿using GDC.EventHost.DTO.Asset;
-using GDC.EventHost.DTO.Event;
-using GDC.EventHost.DTO.Layout;
+﻿using GDC.EventHost.DTO.Event;
+using GDC.EventHost.DTO.SeatingPlan;
+using GDC.EventHost.DTO.VenueAsset;
 using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
@@ -29,6 +29,6 @@ namespace GDC.EventHost.DTO.Venue
 
         public List<VenueAssetDto> VenueAssets { get; set; } = [];
 
-        public List<LayoutDetailDto> Layouts { get; set; } = [];
+        public List<SeatingPlanDto> SeatingPlans { get; set; } = [];
     }
 }

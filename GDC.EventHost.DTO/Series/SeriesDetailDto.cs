@@ -1,5 +1,5 @@
-﻿using GDC.EventHost.DTO.Asset;
-using GDC.EventHost.DTO.EventSummary;
+﻿using GDC.EventHost.DTO.Event;
+using GDC.EventHost.DTO.SeriesAsset;
 using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
@@ -30,7 +30,7 @@ namespace GDC.EventHost.DTO.Series
         [Display(Name = "Status Value")]
         public required string StatusValue { get; set; }
 
-        public List<EventSummaryDto> EventSummaries { get; set; } = [];
+        public List<EventDto> Events { get; set; } = [];
 
         public List<SeriesAssetDto> SeriesAssets { get; set; } = [];
     }

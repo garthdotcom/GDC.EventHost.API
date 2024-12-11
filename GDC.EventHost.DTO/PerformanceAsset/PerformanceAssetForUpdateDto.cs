@@ -1,18 +1,17 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
-namespace GDC.EventHost.DTO.Asset
+namespace GDC.EventHost.DTO.PerformanceAsset
 {
-    public class MemberAssetForUpdateDto
+    public class PerformanceAssetForUpdateDto
     {
         public Guid Id { get; set; }
 
-        [Display(Name = "Member")]
-        [Required(ErrorMessage = "You should enter a Member Id.")]
+        [Display(Name = "Performance")]
+        [Required(ErrorMessage = "You should enter a Performance Id.")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
-            ErrorMessage = "The Member Id must be a valid Guid.")]
-        public Guid MemberId { get; set; }
+            ErrorMessage = "The Performance Id must be a valid Guid.")]
+        public Guid PerformanceId { get; set; }
 
         [Display(Name = "Asset")]
         [Required(ErrorMessage = "You should enter an Asset Id.")]

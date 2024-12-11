@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static GDC.EventHost.DTO.Enums;
+﻿using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.SeatPosition
 {

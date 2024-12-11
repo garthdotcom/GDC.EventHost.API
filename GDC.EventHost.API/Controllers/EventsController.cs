@@ -10,13 +10,13 @@ namespace GDC.EventHost.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<EventDto>> GetEvents()
         {
-            return Ok(EventsDataStore.Current.Events);
+            return Ok(EventHostDataStore.Current.Events);
         }
 
         [HttpGet("{id}")]
         public ActionResult<EventDto> GetEvent(Guid id)
         {
-            var eventToReturn = EventsDataStore.Current.Events.FirstOrDefault(e => e.Id == id);
+            var eventToReturn = EventHostDataStore.Current.Events.FirstOrDefault(e => e.Id == id);
 
             if (eventToReturn == null)
             {

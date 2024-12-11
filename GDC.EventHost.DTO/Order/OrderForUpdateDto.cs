@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static GDC.EventHost.DTO.Enums;
+﻿using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.Order
 {
@@ -14,7 +12,6 @@ namespace GDC.EventHost.DTO.Order
 
         public DateTime Date { get; set; }
 
-        public List<OrderItemForUpdateDto> OrderItems { get; set; }
-            = new List<OrderItemForUpdateDto>();
+        public List<OrderItemForUpdateDto> OrderItems { get; set; } = [];
     }
 }

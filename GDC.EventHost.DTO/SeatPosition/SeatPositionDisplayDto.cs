@@ -8,10 +8,10 @@ namespace GDC.EventHost.DTO.SeatPosition
 
         public SeatPositionTypeEnum SeatPositionTypeId { get; set; }
 
-        public string SeatPositionTypeName { get; set; }
+        public string SeatPositionTypeName { get; set; } = string.Empty;
 
         public int OrdinalValue { get; set; }
 
-        public string DisplayValue { get; set; }
+        public string DisplayValue { get; set; } = string.Empty;
     }
 }

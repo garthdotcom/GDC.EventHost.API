@@ -1,17 +1,16 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
-namespace GDC.EventHost.DTO.Layout
+namespace GDC.EventHost.DTO.SeatingPlan
 {
-    public class LayoutForUpdateDto
+    public class SeatingPlanForUpdateDto
     {
         public Guid Id { get; set; } 
 
         [Display(Name = "Name")]
         [Required(ErrorMessage = "You should enter a Name.")]
-        [MaxLength(150, ErrorMessage = "The Event Type Name should not be longer than 150 characters.")]
-        public string Name { get; set; }
+        [MaxLength(150, ErrorMessage = "The Seating Plan Name should not be longer than 150 characters.")]
+        public required string Name { get; set; }
 
         [Display(Name = "Status")]
         [Required(ErrorMessage = "You should enter a Status.")]

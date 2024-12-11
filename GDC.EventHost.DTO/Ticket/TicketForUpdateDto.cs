@@ -10,7 +10,7 @@ namespace GDC.EventHost.DTO.Ticket
         [Display(Name = "Number")]
         [Required(ErrorMessage = "You should enter a Ticket Number.")]
         [MaxLength(35, ErrorMessage = "The Ticket Number should not be longer than 35 characters.")]
-        public string Number { get; set; }
+        public required string Number { get; set; }
 
         [Display(Name = "Price")]
         [Required(ErrorMessage = "You should enter a Ticket Price.")]
@@ -21,10 +21,10 @@ namespace GDC.EventHost.DTO.Ticket
         [Required(ErrorMessage = "You should enter a Ticket Status.")]
         public TicketStatusEnum TicketStatusId { get; set; }
 
-        [Display(Name = "Event")]
-        [Required(ErrorMessage = "You should enter an Event Id.")]
+        [Display(Name = "Performance")]
+        [Required(ErrorMessage = "You should enter a Performance Id.")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$", 
-            ErrorMessage = "The Event Id must be a valid Guid.")]
+            ErrorMessage = "The Performance Id must be a valid Guid.")]
         public Guid EventId { get; set; }
 
         [Display(Name = "Seat")]
