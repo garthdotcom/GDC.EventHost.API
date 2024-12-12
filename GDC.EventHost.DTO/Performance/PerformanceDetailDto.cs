@@ -21,7 +21,7 @@ namespace GDC.EventHost.DTO.Performance
         public string PerformanceTypeName { get; set; } = string.Empty;
 
         [Display(Name = "Status Id")]
-        public required StatusEnum StatusId { get; set; }
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
 
         [Display(Name = "Status Value")]
         public string StatusValue { get; set; } = string.Empty;

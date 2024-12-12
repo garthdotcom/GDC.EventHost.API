@@ -19,8 +19,7 @@ namespace GDC.EventHost.DTO.Performance
         public required Guid PerformanceTypeId { get; set; }
 
         [Display(Name = "Status Id")]
-        [Required(ErrorMessage = "You should enter a Status Id.")]
-        public required StatusEnum StatusId { get; set; }
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
 
         [Display(Name = "Event Id")]
         [Required(ErrorMessage = "You should enter an Event Id.")]
