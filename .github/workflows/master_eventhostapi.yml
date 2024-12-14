@@ -75,9 +75,6 @@ jobs:
           pwd
           ls -la
           
-      - name: Display File Contents
-        run: cat sql-script.sql
-          
       - name: Azure SQL Deploy
         uses: Azure/sql-action@v2.2.1
         with:
