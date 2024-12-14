@@ -6,6 +6,9 @@ namespace GDC.EventHost.API.Services
     {
         Task<IEnumerable<Event>> GetEventsAsync();
 
+        Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsAsync(
+            string? title, string? searchQuery, int pageNumber, int pageSize);
+
         Task<Event?> GetEventAsync(Guid eventId, bool includePerformances);
 
         Task<IEnumerable<Performance>> GetPerformancesForEventAsync(Guid eventId);

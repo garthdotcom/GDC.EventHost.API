@@ -1,4 +1,5 @@
-﻿using GDC.EventHost.API.DbContexts;
+﻿using AutoMapper;
+using GDC.EventHost.API.DbContexts;
 using GDC.EventHost.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,6 +55,39 @@ namespace GDC.EventHost.API.Services
             return await _context.Events
                 .OrderBy(e => e.Title)
                 .ToListAsync();
+        }
+
+        public async Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsAsync(
+            string? title, string? searchQuery, int pageNumber, int pageSize)
+        {
+            // collection to start from; build the expression tree
+            var collection = _context.Events as IQueryable<Event>;
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                title = title.Trim();
+                collection = collection.Where(e => e.Title == title);
+            }
+            
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {  
+                searchQuery = searchQuery.Trim();
+                collection = collection.Where(e => e.Title.Contains(searchQuery, 
+                    StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            var totalItemCount = await collection.CountAsync();
+
+            var paginationMetadata = new PaginationMetadata(
+                totalItemCount, pageSize, pageNumber);
+
+            // execute the query
+            var collectionToReturn = await collection.OrderBy(e => e.Title)
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (collectionToReturn, paginationMetadata);
         }
 
         public async Task<Performance?> GetPerformanceForEventAsync(Guid eventId, Guid performanceId)

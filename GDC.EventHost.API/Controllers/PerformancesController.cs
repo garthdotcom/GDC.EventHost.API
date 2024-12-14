@@ -3,6 +3,7 @@ using GDC.EventHost.API.Services;
 using GDC.EventHost.DTO.Performance;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace GDC.EventHost.API.Controllers
 {
@@ -14,6 +15,7 @@ namespace GDC.EventHost.API.Controllers
         private readonly IMailService _mailService;
         private readonly IEventHostRepository _eventHostRepository;
         private readonly IMapper _mapper;
+        const int maxPageSize = 20;
 
         public PerformancesController(ILogger<PerformancesController> logger, 
             IMailService mailService,
@@ -31,10 +33,16 @@ namespace GDC.EventHost.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PerformanceDto>>> GetPerformances(Guid eventId)
+        public async Task<ActionResult<IEnumerable<PerformanceDto>>> GetPerformances(Guid eventId,
+            string? title, string? searchQuery, int pageNumber = 1, int pageSize = 10)
         {
             try
             {
+                if (pageSize > maxPageSize)
+                {
+                    pageSize = maxPageSize;
+                }
+
                 if (!await _eventHostRepository.EventExistsAsync(eventId))
                 {
                     _logger.LogInformation("Event with id {EventId} was not found when trying to get all performances.", 
