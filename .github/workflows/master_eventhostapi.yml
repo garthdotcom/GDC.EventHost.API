@@ -34,12 +34,6 @@ jobs:
 
       - name: Generate scripts
         run: dotnet ef migrations script --startup-project GDC.EventHost.API --project GDC.EventHost.API  -o sql-script.sql
-
-      - name: Upload File
-        uses: actions/upload-artifact@v4
-        with:
-          name: migrations-file
-          path: ./sql-script.sql
           
       - name: Show directory contents for debugging
         run: |
@@ -67,9 +61,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: |
-            .net-app
-            migrations-file
+          name: .net-app
       
       - name: Login to Azure
         uses: azure/login@v2
