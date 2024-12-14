@@ -1,4 +1,5 @@
-﻿using GDC.EventHost.API.Services;
+﻿using AutoMapper;
+using GDC.EventHost.API.Services;
 using GDC.EventHost.DTO.Performance;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -11,34 +12,40 @@ namespace GDC.EventHost.API.Controllers
     {
         private readonly ILogger<PerformancesController> _logger;
         private readonly IMailService _mailService;
-        private readonly EventHostDataStore _eventHostDataStore;
+        private readonly IEventHostRepository _eventHostRepository;
+        private readonly IMapper _mapper;
 
         public PerformancesController(ILogger<PerformancesController> logger, 
             IMailService mailService,
-            EventHostDataStore eventHostDataStore)
+            IEventHostRepository eventHostRepository,
+            IMapper mapper)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
-            _eventHostDataStore = eventHostDataStore ?? throw new ArgumentNullException(nameof(eventHostDataStore));
+            _logger = logger ?? 
+                throw new ArgumentNullException(nameof(logger));
+            _mailService = mailService ?? 
+                throw new ArgumentNullException(nameof(mailService));
+            _eventHostRepository = eventHostRepository ?? 
+                throw new ArgumentNullException(nameof(eventHostRepository));
+            _mapper = mapper ?? 
+                throw new ArgumentNullException(nameof(mapper));
         }
 
-
         [HttpGet]
-        public ActionResult<IEnumerable<PerformanceDto>> GetPerformances(Guid eventId)
+        public async Task<ActionResult<IEnumerable<PerformanceDto>>> GetPerformances(Guid eventId)
         {
             try
             {
-                var eventFromStore = _eventHostDataStore
-                    .Events.FirstOrDefault(e => e.Id == eventId);
-
-                if (eventFromStore == null)
+                if (!await _eventHostRepository.EventExistsAsync(eventId))
                 {
                     _logger.LogInformation("Event with id {EventId} was not found when trying to get all performances.", 
                         eventId);
                     return NotFound();
                 }
 
-                return Ok(eventFromStore.Performances);
+                var performanceEntities = await _eventHostRepository
+                    .GetPerformancesForEventAsync(eventId);
+
+                return Ok(_mapper.Map<IEnumerable<PerformanceDto>>(performanceEntities));
             }
             catch (Exception ex)
             {
@@ -50,187 +57,177 @@ namespace GDC.EventHost.API.Controllers
         }
 
         [HttpGet("{performanceId}", Name = "GetPerformance")]
-        public ActionResult GetPerformance(Guid eventId, Guid performanceId)
+        public async Task<ActionResult> GetPerformance(Guid eventId, Guid performanceId)
         {
-            var eventFromStore = _eventHostDataStore
-                .Events.FirstOrDefault(e => e.Id == eventId);
-
-            if (eventFromStore == null)
+            if (!await _eventHostRepository.EventExistsAsync(eventId))
             {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to get a performance with id {PerformanceId}.", eventId, performanceId);
+                _logger.LogInformation("Event with id {EventId} was not found when trying to get all performances.",
+                    eventId);
                 return NotFound();
             }
 
-            var performance = eventFromStore
-                .Performances.FirstOrDefault(t => t.Id == performanceId);
+            var performanceEntity = await _eventHostRepository.GetPerformanceForEventAsync(eventId, performanceId);
 
-            if (performance == null)
+            if (performanceEntity == null)
             {
+                _logger.LogInformation("The requested performance id {PerfId} was not for event id {EventId}", performanceId, eventId);
                 return NotFound();
             }
 
-            return Ok(performance);
+            return Ok(_mapper.Map<PerformanceDto>(performanceEntity));
         }
 
         [HttpPost]
-        public ActionResult<PerformanceDto> CreatePerformance(
+        public async Task<ActionResult<PerformanceDto>> CreatePerformance(
             Guid eventId,
-            [FromBody] PerformanceForUpdateDto performanceForCreate)
+            [FromBody] PerformanceForUpdateDto performanceForUpdateDto)
         {
-            var eventFromStore = _eventHostDataStore
-                .Events.FirstOrDefault(e => e.Id == eventId);
-
-            if (eventFromStore == null)
+            if (!await _eventHostRepository.EventExistsAsync(eventId))
             {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to create a new performance.", eventId);
+                _logger.LogInformation("Event with id {EventId} was not found when trying to create a performance.",
+                    eventId);
                 return NotFound();
             }
 
-            var newPerformance = new PerformanceDto()
+            var newPerformanceEntity = _mapper.Map<Entities.Performance>(performanceForUpdateDto);
+
+            await _eventHostRepository.AddPerformanceToEventAsync(eventId, newPerformanceEntity);
+
+            if (await _eventHostRepository.SaveChangesAsync())
             {
-                Date = performanceForCreate.Date,
-                Title = performanceForCreate.Title,
-                EventId = performanceForCreate.EventId,
-                PerformanceTypeId = performanceForCreate.PerformanceTypeId,
-                StatusId = performanceForCreate.StatusId,
-                VenueId = performanceForCreate.VenueId,
-                SeatingPlanId = performanceForCreate.SeatingPlanId,
-                Id = Guid.NewGuid()
-            };
+                var performanceToReturnDto = _mapper.Map<PerformanceDto>(newPerformanceEntity);
 
-            eventFromStore.Performances.Add(newPerformance);
+                return CreatedAtRoute("GetPerformance",
+                    new
+                    {
+                        eventId = performanceToReturnDto.EventId,
+                        performanceId = performanceToReturnDto.Id
+                    },
+                    performanceToReturnDto);
+            }
 
-            return CreatedAtRoute("GetPerformance",
-                new
-                {
-                    eventId = newPerformance.EventId,
-                    performanceId = newPerformance.Id
-                },
-                newPerformance);
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"A problem occurred when trying to create a new performance for event id {eventId}.");
         }
 
         [HttpPut("{performanceId}")]
-        public ActionResult UpdatePerformance(
+        public async Task<ActionResult> UpdatePerformance(
             Guid eventId,
             Guid performanceId,
-            PerformanceForUpdateDto performanceForUpdate)
+            PerformanceForUpdateDto performanceForUpdateDto)
         {
-            var eventFromStore = _eventHostDataStore
-                .Events.FirstOrDefault(e => e.Id == eventId);
-
-            if (eventFromStore == null)
+            if (!await _eventHostRepository.EventExistsAsync(eventId))
             {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to update the performance with id {PerformanceId}.", eventId, performanceId);
+                _logger.LogInformation("Event with id {EventId} was not found when trying to update a performance.",
+                    eventId);
                 return NotFound();
             }
 
-            var performanceFromStore = _eventHostDataStore
-                .Performances.FirstOrDefault(p => p.Id == performanceId);
+            var performanceEntity = await _eventHostRepository
+                .GetPerformanceForEventAsync(eventId, performanceId);
 
-            if (performanceFromStore == null)
+            if (performanceEntity == null)
             {
-                _logger.LogInformation("Performance with id {PerformanceId} was not found when trying to update the performance.", performanceFromStore?.Id);
+                _logger.LogInformation("Performance with id {PerformanceId} was not found when trying to update the performance.", performanceId);
                 return NotFound();
             }
 
-            performanceFromStore.EventId = eventId;
-            performanceFromStore.Date = performanceForUpdate.Date; 
-            performanceFromStore.Title = performanceForUpdate.Title;
-            performanceFromStore.VenueId = performanceForUpdate.VenueId;
-            performanceFromStore.StatusId = performanceForUpdate.StatusId;
-            performanceFromStore.PerformanceTypeId = performanceForUpdate.PerformanceTypeId;
-            performanceFromStore.SeatingPlanId = performanceForUpdate.SeatingPlanId;
+            // overwrite the entity with the corresponding values in the dto
+            _mapper.Map(performanceForUpdateDto, performanceEntity);
 
-            return NoContent();
+            if (await _eventHostRepository.SaveChangesAsync())
+            {
+                return NoContent();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"A problem occurred when trying to update the performance with id {performanceId} for event id {eventId}.");
         }
 
         [HttpPatch("{performanceId}")]
-        public ActionResult PartiallyUpdatePerformance(
+        public async Task<ActionResult> PartiallyUpdatePerformance(
             Guid eventId,
             Guid performanceId,
             JsonPatchDocument<PerformanceForUpdateDto> patchDocument)
         {
-            var eventFromStore = _eventHostDataStore
-                .Events.FirstOrDefault(e => e.Id == eventId);
-
-            if (eventFromStore == null)
+            if (!await _eventHostRepository.EventExistsAsync(eventId))
             {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to patch a performance with id {PerformanceId}.", eventId, performanceId);
+                _logger.LogInformation("Event with id {EventId} was not found when trying to partially update a performance.",
+                    eventId);
                 return NotFound();
             }
 
-            var performanceFromStore = _eventHostDataStore
-                .Performances.FirstOrDefault(p => p.Id == performanceId);
+            var performanceEntity = await _eventHostRepository
+                .GetPerformanceForEventAsync(eventId, performanceId);
 
-            if (performanceFromStore == null)
+            if (performanceEntity == null)
             {
-                _logger.LogInformation("Performance with id {PerformanceId} was not found when trying to patch the performance.", performanceFromStore?.Id);
+                _logger.LogInformation("Performance with id {PerformanceId} was not found when trying to partially update the performance.", performanceId);
                 return NotFound();
             }
 
-            var performanceToPatch = new PerformanceForUpdateDto()
-            {
-                Date = performanceFromStore.Date,
-                Title = performanceFromStore.Title,
-                EventId = eventId,
-                PerformanceTypeId = performanceFromStore.PerformanceTypeId,
-                StatusId = performanceFromStore.StatusId,
-                VenueId = performanceFromStore.VenueId,
-                SeatingPlanId = performanceFromStore.SeatingPlanId
-            };
+            var performanceToPatchDto = _mapper.Map<PerformanceForUpdateDto>(performanceEntity);
 
-            patchDocument.ApplyTo(performanceToPatch, ModelState);
+            patchDocument.ApplyTo(performanceToPatchDto, ModelState);
 
             // check for any errors in the patch document
             if (!ModelState.IsValid)
             {
-                _logger.LogInformation("An issue was found in the patch document when trying to patch id {PerformanceId}.", performanceFromStore?.Id);
+                _logger.LogInformation("An issue was found in the patch document when trying to patch id {PerformanceId}.", performanceId);
                 return BadRequest(ModelState);
             }
 
             // check for broken validation rules on the model
-            if (!TryValidateModel(performanceToPatch))
+            if (!TryValidateModel(performanceToPatchDto))
             {
-                _logger.LogInformation("Validation issue(s) was/were found when trying to patch id {PerformanceId}.", performanceFromStore?.Id);
+                _logger.LogInformation("Validation issue(s) was/were found when trying to patch id {PerformanceId}.", performanceId);
                 return BadRequest(ModelState);
             }
 
-            performanceFromStore.EventId = eventId;
-            performanceFromStore.Date = performanceToPatch.Date;
-            performanceFromStore.VenueId = performanceToPatch.VenueId;
-            performanceFromStore.StatusId = performanceToPatch.StatusId;
-            performanceFromStore.PerformanceTypeId = performanceToPatch.PerformanceTypeId;
-            performanceFromStore.SeatingPlanId = performanceToPatch.SeatingPlanId;
+            // overwrite the entity with the corresponding dto values
+            _mapper.Map(performanceToPatchDto, performanceEntity);
 
-            return NoContent();
+            if (await _eventHostRepository.SaveChangesAsync())
+            {
+                return NoContent();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"A problem occurred when trying to partially update the performance with id {performanceId} for event id {eventId}.");
+
         }
 
         [HttpDelete("{performanceId}")]
-        public ActionResult DeletePerformance(Guid eventId, Guid performanceId)
+        public async Task<ActionResult> DeletePerformance(Guid eventId, Guid performanceId)
         {
-            var eventFromStore = _eventHostDataStore
-                .Events.FirstOrDefault(e => e.Id == eventId);
-
-            if (eventFromStore == null)
+            if (!await _eventHostRepository.EventExistsAsync(eventId))
             {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to delete a performance with id {PerformanceId}.", eventId, performanceId);
+                _logger.LogInformation("Event with id {EventId} was not found when trying to delete a performance with id {PerformanceId}.",
+                    eventId, performanceId);
                 return NotFound();
             }
 
-            var performanceFromStore = _eventHostDataStore
-                .Performances.FirstOrDefault(p => p.Id == performanceId);
+            var performanceEntity = await _eventHostRepository
+                .GetPerformanceForEventAsync(eventId, performanceId);
 
-            if (performanceFromStore == null)
+            if (performanceEntity == null)
             {
-                _logger.LogInformation("Performance with id {PerformanceId} was not found when trying to delete the performance.", performanceFromStore?.Id);
+                _logger.LogInformation("Performance with id {PerformanceId} was not found when trying to partially update the performance.", performanceId);
                 return NotFound();
             }
 
-            eventFromStore.Performances.Remove(performanceFromStore);
-            _mailService.Send($"Performance Deleted: {performanceFromStore.Title}", 
-                $"A performance called '{performanceFromStore.Title}' for event '{eventFromStore.Title}' was deleted.");
+            _eventHostRepository.DeletePerformance(performanceEntity);
 
-            return NoContent();
+            if (await _eventHostRepository.SaveChangesAsync())
+            {
+                _mailService.Send($"Performance Deleted: {performanceEntity.Title}",
+                $"A performance called '{performanceEntity.Title}' for event id '{eventId}' was deleted.");
+                return NoContent();
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"A problem occurred when trying to delete the performance '{performanceEntity.Title}' with id {performanceId} for event id {eventId}.");
+
         }
     }
 }

@@ -2,6 +2,9 @@ using GDC.EventHost.API;
 using GDC.EventHost.API.DbContexts;
 using GDC.EventHost.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -57,7 +60,16 @@ builder.Services.AddTransient<IMailService, CloudMailService>();
 builder.Services.AddSingleton<EventHostDataStore>();
 
 builder.Services.AddDbContext<EventHostContext>(dbContextOptions
-    => dbContextOptions.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=EventHostDb-Local;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"));
+    => {dbContextOptions.UseSqlServer(
+            builder.Configuration["ConnectionStrings:EventHostDBConnectionString"]);
+        dbContextOptions.ConfigureWarnings(warnings => 
+            warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+});
+
+builder.Services.AddScoped<IEventHostRepository, EventHostRepository>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 var app = builder.Build();
 

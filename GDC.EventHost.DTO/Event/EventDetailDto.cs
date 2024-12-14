@@ -21,10 +21,10 @@ namespace GDC.EventHost.DTO.Event
         public DateTime? EndDate { get; set; }
 
         [Display(Name = "Description")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         [Display(Name = "Long Description")]
-        public string LongDescription { get; set; } = string.Empty;
+        public string? LongDescription { get; set; }
 
         [Display(Name = "Status Id")]
         public StatusEnum StatusId { get; set; } = StatusEnum.Pending;

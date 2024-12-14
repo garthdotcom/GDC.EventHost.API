@@ -1,4 +1,5 @@
-﻿using GDC.EventHost.API.Services;
+﻿using AutoMapper;
+using GDC.EventHost.API.Services;
 using GDC.EventHost.DTO.Event;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,34 +11,44 @@ namespace GDC.EventHost.API.Controllers
     {
         private readonly ILogger<EventsController> _logger;
         private readonly IMailService _mailService;
-        private readonly EventHostDataStore _eventHostDataStore;
+        private readonly IEventHostRepository _eventHostRepository;
+        private readonly IMapper _mapper;
 
         public EventsController(ILogger<EventsController> logger,
             IMailService mailService,
-            EventHostDataStore eventHostDataStore)
+            IEventHostRepository eventHostRepository,
+            IMapper mapper)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
-            _eventHostDataStore = eventHostDataStore ?? throw new ArgumentNullException(nameof(eventHostDataStore));
+            _eventHostRepository = eventHostRepository ?? throw new ArgumentNullException(nameof(eventHostRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<EventDto>> GetEvents()
+        public async Task<ActionResult<IEnumerable<EventWithoutPerformancesDto>>> GetEvents()
         {
-            return Ok(_eventHostDataStore.Events);
+            var eventEntities = await _eventHostRepository.GetEventsAsync();
+
+            return Ok(_mapper.Map<IEnumerable<EventWithoutPerformancesDto>>(eventEntities));
         }
 
         [HttpGet("{id}")]
-        public ActionResult<EventDto> GetEvent(Guid id)
+        public async Task<IActionResult> GetEvent(Guid id, bool includePerformances)
         {
-            var eventToReturn = _eventHostDataStore.Events.FirstOrDefault(e => e.Id == id);
+            var entity = await _eventHostRepository.GetEventAsync(id, includePerformances);
 
-            if (eventToReturn == null)
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            return Ok(eventToReturn);
+            if (includePerformances)
+            {
+                return Ok(_mapper.Map<EventDto>(entity));
+            }
+
+            return Ok(_mapper.Map<EventWithoutPerformancesDto>(entity));
         }
     }
 }
