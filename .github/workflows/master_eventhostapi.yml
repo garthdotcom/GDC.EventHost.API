@@ -35,6 +35,14 @@ jobs:
       - name: Generate scripts
         run: dotnet ef migrations script --startup-project GDC.EventHost.API --project GDC.EventHost.API  -o sql-script.sql
 
+      - name: Show directory contents for debugging
+        run: |
+          ls -la
+          cd ${{env.DOTNET_ROOT}}/myapp
+          ls -la
+          cd ${{env.DOTNET_ROOT}}
+          ls -la
+          
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -62,14 +70,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2E16ABC310104D0B943405665A547FD3 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4F4EB363B0C040F4BA3C1C8235506C46 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A02FC12DE9E744B1A66482A77C456452 }}
-
-      - name: Show directory contents for debugging
-        run: |
-          ls -la
-          cd ${{env.DOTNET_ROOT}}/myapp
-          ls -la
-          cd ..
-          ls -la
 
       - name: Azure SQL Deploy
         uses: Azure/sql-action@v2.2.1
