@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Generate scripts
-        run: dotnet ef migrations script --output ${{env.DOTNET_ROOT}}/sql/sql-script.sql --idempotent --context ApplicationDbContext
+        run: dotnet ef migrations script --output ${{env.DOTNET_ROOT}}/sql-script.sql --idempotent --context ApplicationDbContext
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -42,7 +42,7 @@ jobs:
           path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: build
     environment:
       name: 'Production'
@@ -69,7 +69,7 @@ jobs:
           # The connection string, including authentication information, for the Azure SQL Server database.
           connection-string: ${{ secrets.CONNECTION_STRING }}
           # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
-          path: ${{env.DOTNET_ROOT}}/sql/sql-script.sql
+          path: ${{env.DOTNET_ROOT}}/sql-script.sql
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
