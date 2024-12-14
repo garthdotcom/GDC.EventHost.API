@@ -36,7 +36,7 @@ jobs:
         run: dotnet ef migrations script --startup-project GDC.EventHost.API --project GDC.EventHost.API  -o sql-script.sql
 
       - name: Upload File
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: migrations-file
           path: ./sql-script.sql
@@ -82,7 +82,7 @@ jobs:
           ls -la
 
       - name: Download File
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: migrations-file
           
