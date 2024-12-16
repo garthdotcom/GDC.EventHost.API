@@ -35,7 +35,7 @@ jobs:
           dotnet tool install dotnet-ef
           
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}\myapp
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}\myapp"
 
       - name: Generate scripts
         run: dotnet ef migrations script --startup-project GDC.EventHost.API --project GDC.EventHost.API  -o sql-script.sql
