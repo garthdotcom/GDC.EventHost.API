@@ -72,12 +72,12 @@ builder.Services.AddScoped<IEventHostRepository, EventHostRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-if (builder.Environment.IsProduction())
-{
-    builder.Configuration.AddAzureKeyVault(
-        new Uri(builder.Configuration["keyVaultUri"]), 
-        new DefaultAzureCredential());
-}
+//if (builder.Environment.IsProduction())
+//{
+//    builder.Configuration.AddAzureKeyVault(
+//        new Uri(builder.Configuration["keyVaultUri"]), 
+//        new DefaultAzureCredential());
+//}
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
@@ -111,11 +111,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 
