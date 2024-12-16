@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace GDC.EventHost.API.Controllers
 {
-    [Authorize(Policy = "MustBeAdministrator")]
+    //[Authorize(Policy = "MustBeAdministrator")]
     [Route("api/events/{eventId}/performances")]
     [ApiController]
     public class PerformancesController : ControllerBase
