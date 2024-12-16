@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using GDC.EventHost.API.Services;
 using GDC.EventHost.DTO.Performance;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace GDC.EventHost.API.Controllers
 {
+    [Authorize(Policy = "MustBeAdministrator")]
     [Route("api/events/{eventId}/performances")]
     [ApiController]
     public class PerformancesController : ControllerBase

@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using GDC.EventHost.API.Services;
 using GDC.EventHost.DTO.Event;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace GDC.EventHost.API.Controllers
 {
-    [ApiController]
+    [Authorize]
     [Route("api/events")]
+    [ApiController]
     public class EventsController : ControllerBase
     {
         private readonly ILogger<EventsController> _logger;
