@@ -72,6 +72,8 @@ builder.Services.AddScoped<IEventHostRepository, EventHostRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// reverting back due to 404 post-deployment error
+
 //if (builder.Environment.IsProduction())
 //{
 //    builder.Configuration.AddAzureKeyVault(
@@ -79,30 +81,29 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 //        new DefaultAzureCredential());
 //}
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Authentication:Issuer"],
-            ValidAudience = builder.Configuration["Authentication:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
-        };
-    });
+//builder.Services.AddAuthentication("Bearer")
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters = new()
+//        {
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateIssuerSigningKey = true,
+//            ValidIssuer = builder.Configuration["Authentication:Issuer"],
+//            ValidAudience = builder.Configuration["Authentication:Audience"],
+//            IssuerSigningKey = new SymmetricSecurityKey(
+//                Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
+//        };
+//    });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("MustBeAdministrator", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireClaim("admin", "True");
-    });
-});
-
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("MustBeAdministrator", policy =>
+//    {
+//        policy.RequireAuthenticatedUser();
+//        policy.RequireClaim("admin", "True");
+//    });
+//});
 
 var app = builder.Build();
 
@@ -111,11 +112,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-//}
+}
 
 app.UseHttpsRedirection();
 
