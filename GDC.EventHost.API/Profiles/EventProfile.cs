@@ -9,6 +9,8 @@ namespace GDC.EventHost.API.Profiles
         {
             CreateMap<Entities.Event, EventWithoutPerformancesDto>();
             CreateMap<Entities.Event, EventDto>();
+            CreateMap<EventForUpdateDto, Entities.Event>();
+            CreateMap<Entities.Event, EventForUpdateDto>();
         }
     }
 }

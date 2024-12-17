@@ -1,11 +1,10 @@
-﻿using GDC.EventHost.DTO.Performance;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.API.Entities
 {
-    public class Event
+    public class Series
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,13 +27,9 @@ namespace GDC.EventHost.API.Entities
         [Required]
         public StatusEnum StatusId { get; set; }
 
-        [ForeignKey("SeriesId")]
-        public Series? Series { get; set; }
-        public Guid? SeriesId { get; set; }
+        public List<Event> Events { get; set; } = [];
 
-        public List<Performance> Performances { get; set; } = [];
-
-        public Event(string title)
+        public Series(string title)
         {
             Title = title;
         }

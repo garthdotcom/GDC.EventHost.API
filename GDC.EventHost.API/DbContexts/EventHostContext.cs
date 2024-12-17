@@ -5,6 +5,8 @@ namespace GDC.EventHost.API.DbContexts
 {
     public class EventHostContext : DbContext
     {
+        public DbSet<Series> Series { get; set; }
+
         public DbSet<Event> Events { get; set; }
 
         public DbSet<Performance> Performances { get; set; }
@@ -36,6 +38,37 @@ namespace GDC.EventHost.API.DbContexts
 
             var venueId1 = new Guid("76824d3e-78b7-4284-8117-a238c38c3dc7");
             var venueId2 = new Guid("aa9d1367-1d71-4cb9-98b1-633b940967ee");
+
+            modelBuilder.Entity<Series>()
+                .HasData(
+                    new Series("Series One")
+                    {
+                        Id = seriesId1,
+                        Description = "Integer tempus himenaeos suscipit penatibus mauris a a ultrices netus.",
+                        LongDescription = "Integer tempus himenaeos suscipit penatibus mauris a a ultrices netus. Vel torquent iaculis dictum; hac sem habitant dis dictumst. Ligula mattis vulputate taciti vitae tellus. Dignissim felis cursus hac arcu ultricies. Primis vel quam interdum ut parturient eu proin. Eu justo rhoncus etiam pellentesque pretium varius. Aenean eros id senectus ligula ac praesent.",
+                        StartDate = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(60),
+                        StatusId = DTO.Enums.StatusEnum.Pending
+                    },
+                    new Series("Series Two")
+                    {
+                        Id = seriesId2,
+                        Description = "Sagittis varius justo aliquam dignissim nascetur mauris neque.",
+                        LongDescription = "Sagittis varius justo aliquam dignissim nascetur mauris neque. Eleifend adipiscing vehicula fusce ac tempus himenaeos. Afusce habitasse sit magnis facilisi aptent lacinia. Magnis tristique lorem tincidunt cubilia aliquet. Ante mus consectetur vel id et. Dui euismod aenean porta varius diam ridiculus iaculis inceptos. Ut nostra augue mus imperdiet finibus gravida ex ipsum. Elementum metus lectus adipiscing; pretium mi ultricies magna. Conubia ad scelerisque venenatis a diam rutrum, sed congue egestas.",
+                        StartDate = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(60),
+                        StatusId = DTO.Enums.StatusEnum.Pending
+                    },
+                    new Series("Series Three")
+                    {
+                        Id = seriesId3,
+                        Description = "Facilisis nulla turpis proin fames fusce condimentum praesent lacus dui.",
+                        LongDescription = "Facilisis nulla turpis proin fames fusce condimentum praesent lacus dui. Aliquam conubia porta sem semper elementum venenatis nam nisi risus. Mus sem fames dolor suspendisse interdum tincidunt adipiscing. Morbi in cursus diam rhoncus cursus nec ullamcorper eros. Dolor torquent elementum nullam mi varius magnis ultricies. Mauris etiam vehicula primis fringilla tortor tincidunt maximus integer rutrum. Taciti tellus efficitur dolor torquent ipsum sodales. Eros justo dui arcu potenti; senectus duis nunc.",
+                        StartDate = DateTime.Now,
+                        EndDate = DateTime.Now.AddDays(60),
+                        StatusId = DTO.Enums.StatusEnum.Pending
+                    }
+                );
 
             modelBuilder.Entity<Event>()
                 .HasData(

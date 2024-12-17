@@ -112,11 +112,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 
@@ -126,7 +126,9 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => { 
-    endpoints.MapControllers(); });
+app.MapControllers();
+
+//app.UseEndpoints(endpoints => { 
+//    endpoints.MapControllers(); });
 
 app.Run();

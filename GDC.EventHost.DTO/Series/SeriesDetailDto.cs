@@ -9,8 +9,8 @@ namespace GDC.EventHost.DTO.Series
     {
         public Guid Id { get; set; }
 
-        [Display(Name = "Name")]
-        public required string Name { get; set; }
+        [Display(Name = "Title")]
+        public required string Title { get; set; }
 
         [Display(Name = "Description")]
         public string Description { get; set; } = string.Empty;

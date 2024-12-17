@@ -66,6 +66,7 @@ namespace GDC.EventHost.API.Controllers
             }
         }
 
+
         [HttpGet("{performanceId}", Name = "GetPerformance")]
         public async Task<ActionResult> GetPerformance(Guid eventId, Guid performanceId)
         {
@@ -86,6 +87,7 @@ namespace GDC.EventHost.API.Controllers
 
             return Ok(_mapper.Map<PerformanceDto>(performanceEntity));
         }
+
 
         [HttpPost]
         public async Task<ActionResult<PerformanceDto>> CreatePerformance(
@@ -120,6 +122,7 @@ namespace GDC.EventHost.API.Controllers
                     $"A problem occurred when trying to create a new performance for event id {eventId}.");
         }
 
+
         [HttpPut("{performanceId}")]
         public async Task<ActionResult> UpdatePerformance(
             Guid eventId,
@@ -153,6 +156,7 @@ namespace GDC.EventHost.API.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError,
                     $"A problem occurred when trying to update the performance with id {performanceId} for event id {eventId}.");
         }
+
 
         [HttpPatch("{performanceId}")]
         public async Task<ActionResult> PartiallyUpdatePerformance(
@@ -207,6 +211,7 @@ namespace GDC.EventHost.API.Controllers
 
         }
 
+
         [HttpDelete("{performanceId}")]
         public async Task<ActionResult> DeletePerformance(Guid eventId, Guid performanceId)
         {
@@ -237,7 +242,6 @@ namespace GDC.EventHost.API.Controllers
 
             return StatusCode(StatusCodes.Status500InternalServerError,
                     $"A problem occurred when trying to delete the performance '{performanceEntity.Title}' with id {performanceId} for event id {eventId}.");
-
         }
     }
 }
