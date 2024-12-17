@@ -11,7 +11,7 @@ on:
 
 jobs:
   buildanddeploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -35,7 +35,7 @@ jobs:
           dotnet tool install dotnet-ef
           
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}\myapp"
 
       - name: Generate scripts
         run: dotnet ef migrations script --startup-project GDC.EventHost.API --project GDC.EventHost.API  -o sql-script.sql
@@ -53,7 +53,7 @@ jobs:
           # The connection string, including authentication information, for the Azure SQL Server database.
           connection-string: ${{ secrets.CONNECTION_STRING }}
           # Path to the file used for this action. Supported file types are .sql, .dacpac, or .sqlproj.
-          path: ./sql-script.sql
+          path: .\sql-script.sql
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
