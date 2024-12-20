@@ -78,7 +78,7 @@ jobs:
           package: ./.net-app/
 
       - name: Azure SQL Deploy
-        uses: Azure/sql-action@v4
+        uses: Azure/sql-action@v2.2.1
         with:
           connection-string: ${{ secrets.SQL_CONNECTION_STRING }}
           path: .ddl-updates/sql-script.sql
