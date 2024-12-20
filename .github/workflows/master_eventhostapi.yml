@@ -21,11 +21,27 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Restore dependencies
+        run: dotnet restore
+
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: Install EF tools
+        run: |
+             dotnet new tool-manifest
+             dotnet tool install dotnet-ef
+
+      - name: Generate EF Core migration script
+        run: dotnet ef migrations script --idempotent --nobuild --configuration Release --output ${{env.DOTNET.ROOT}}/sql/sql-script.sql --context GDC.EventHost.API.Data.EventHostContext --project ${{ github.workspace }}/GDC.EventHost.API/GDC.EventHost.API.csproj
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ddl-updates
+          path: ${{env.DOTNET_ROOT}}/sql/sql-script.sql
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -43,10 +59,8 @@ jobs:
       id-token: write #This is required for requesting the JWT
 
     steps:
-      - name: Download artifact from build job
+      - name: Download all artifacts from build job
         uses: actions/download-artifact@v4
-        with:
-          name: .net-app
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -61,5 +75,12 @@ jobs:
         with:
           app-name: 'eventhostapi'
           slot-name: 'Production'
-          package: .
+          package: ./.net-app/
+
+      - name: Azure SQL Deploy
+        uses: Azure/sql-action@v4
+        with:
+          connection-string: ${{ secrets.SQL_CONNECTION_STRING }}
+          path: .ddl-updates/sql-script.sql
+        
           
