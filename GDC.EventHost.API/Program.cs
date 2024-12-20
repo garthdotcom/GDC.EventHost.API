@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Azure.Identity;
+using static GDC.EventHost.API.DbContexts.EventHostContext;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -117,6 +118,16 @@ if (!app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 //}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    //var context = services.GetRequiredService<EventHostContext>();
+    //context.Database.EnsureCreated();
+
+    SeedData.Initialize(services);
+}
 
 app.UseHttpsRedirection();
 
