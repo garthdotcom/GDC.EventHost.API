@@ -30,6 +30,12 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
       - name: Install EF tools
         run: |
              dotnet new tool-manifest
@@ -42,12 +48,6 @@ jobs:
         with:
           name: ddl-updates
           path: ${{env.DOTNET_ROOT}}/sql/sql-script.sql
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -81,6 +81,5 @@ jobs:
         uses: Azure/sql-action@v2.2.1
         with:
           connection-string: ${{ secrets.CONNECTION_STRING }}
-          path: .ddl-updates/sql-script.sql
-        
+          path: ./ddl-updates/sql-script.sql
           
