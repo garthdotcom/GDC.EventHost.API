@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Azure.Identity;
+
 using static GDC.EventHost.API.DbContexts.EventHostContext;
 
 Log.Logger = new LoggerConfiguration()
@@ -73,29 +74,30 @@ builder.Services.AddScoped<IEventHostRepository, EventHostRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+
+if (builder.Environment.IsProduction())
+{
+    builder.Configuration.AddAzureKeyVault(
+        new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+        new DefaultAzureCredential());
+}
+
 // reverting back due to 404 post-deployment error
 
-//if (builder.Environment.IsProduction())
-//{
-//    builder.Configuration.AddAzureKeyVault(
-//        new Uri(builder.Configuration["keyVaultUri"]), 
-//        new DefaultAzureCredential());
-//}
-
-//builder.Services.AddAuthentication("Bearer")
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new()
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = builder.Configuration["Authentication:Issuer"],
-//            ValidAudience = builder.Configuration["Authentication:Audience"],
-//            IssuerSigningKey = new SymmetricSecurityKey(
-//                Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
-//        };
-//    });
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Authentication:Issuer"],
+            ValidAudience = builder.Configuration["Authentication:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
+        };
+    });
 
 //builder.Services.AddAuthorization(options =>
 //{
@@ -123,9 +125,6 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    //var context = services.GetRequiredService<EventHostContext>();
-    //context.Database.EnsureCreated();
-
     SeedData.Initialize(services);
 }
 
@@ -138,8 +137,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-//app.UseEndpoints(endpoints => { 
-//    endpoints.MapControllers(); });
 
 app.Run();
