@@ -1,5 +1,4 @@
-﻿using GDC.EventHost.DTO.Performance;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static GDC.EventHost.DTO.Enums;
 
@@ -13,7 +12,7 @@ namespace GDC.EventHost.API.Entities
 
         [Required]
         [MaxLength(150)]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         public DateTime? StartDate { get; set; }
 
@@ -33,10 +32,5 @@ namespace GDC.EventHost.API.Entities
         public Guid? SeriesId { get; set; }
 
         public List<Performance> Performances { get; set; } = [];
-
-        public Event(string title)
-        {
-            Title = title;
-        }
     }
 }

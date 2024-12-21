@@ -15,9 +15,11 @@ namespace GDC.EventHost.API.Entities
 
         [Required]
         [MaxLength(150)]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         [Required]
+        [ForeignKey("PerformanceTypeId")]
+        public required PerformanceType PerformanceType { get; set; }
         public Guid PerformanceTypeId { get; set; }
 
         [Required]
@@ -27,13 +29,9 @@ namespace GDC.EventHost.API.Entities
 
         public Guid? SeatingPlanId { get; set; }
 
+        [Required]
         [ForeignKey("EventId")]
-        public Event Event { get; set; }
+        public required Event Event { get; set; }
         public Guid EventId { get; set; }
-
-        public Performance(string title)
-        {
-            Title = title;
-        }
     }
 }

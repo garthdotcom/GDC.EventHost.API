@@ -19,7 +19,9 @@ namespace GDC.EventHost.API.DbContexts
                 var eventId2 = new Guid("a0292853-7d7c-431f-9545-addb443296fd");
                 var eventId3 = new Guid("bc6adac2-82ed-4a7e-9793-c60084439a65");
 
-                var performanceTypeId = new Guid("af3bba31-bb59-4638-ad4b-dc62d7315d06");
+                var performanceTypeId1 = new Guid("af3bba31-bb59-4638-ad4b-dc62d7315d06");
+                var performanceTypeId2 = new Guid("872e6458-cf85-4370-bd00-c2ecd8eba886");
+                var performanceTypeId3 = new Guid("680ceddb-3da1-474b-ba56-88b67d04668f");
 
                 var performanceId1 = new Guid("3c2c43ea-09e9-4ff3-97e5-a1794cb8fa4d");
                 var performanceId2 = new Guid("f1463c64-37ba-4784-b40f-0efe753b5c0f");
@@ -35,30 +37,58 @@ namespace GDC.EventHost.API.DbContexts
                 var venueId1 = new Guid("76824d3e-78b7-4284-8117-a238c38c3dc7");
                 var venueId2 = new Guid("aa9d1367-1d71-4cb9-98b1-633b940967ee");
 
+
+                if (!context.PerformanceTypes.Any())
+                {
+                    context.PerformanceTypes.AddRange(
+                        new PerformanceType()
+                        {
+                            Id = performanceTypeId1,
+                            Name = "Concert",
+                            Description = "Some text describing what the type Concert is about."
+                        },
+                        new PerformanceType()
+                        {
+                            Id = performanceTypeId2,
+                            Name = "Film",
+                            Description = "Some text describing what the type Film is about."
+                        },
+                        new PerformanceType()
+                        {
+                            Id = performanceTypeId3,
+                            Name = "Lecture",
+                            Description = "Some text describing what the type Lecture is about."
+                        }
+                    );
+                }
+
                 if (!context.Series.Any())
                 {
                     context.Series.AddRange(
-                        new Series("Series One")
+                        new Series()
                         {
                             Id = seriesId1,
+                            Title = "Series One",
                             Description = "Integer tempus himenaeos suscipit penatibus mauris a a ultrices netus.",
                             LongDescription = "Integer tempus himenaeos suscipit penatibus mauris a a ultrices netus. Vel torquent iaculis dictum; hac sem habitant dis dictumst. Ligula mattis vulputate taciti vitae tellus. Dignissim felis cursus hac arcu ultricies. Primis vel quam interdum ut parturient eu proin. Eu justo rhoncus etiam pellentesque pretium varius. Aenean eros id senectus ligula ac praesent.",
                             StartDate = DateTime.Now,
                             EndDate = DateTime.Now.AddDays(60),
                             StatusId = DTO.Enums.StatusEnum.Pending
                         },
-                        new Series("Series Two")
+                        new Series()
                         {
                             Id = seriesId2,
+                            Title = "Series Two",
                             Description = "Sagittis varius justo aliquam dignissim nascetur mauris neque.",
                             LongDescription = "Sagittis varius justo aliquam dignissim nascetur mauris neque. Eleifend adipiscing vehicula fusce ac tempus himenaeos. Afusce habitasse sit magnis facilisi aptent lacinia. Magnis tristique lorem tincidunt cubilia aliquet. Ante mus consectetur vel id et. Dui euismod aenean porta varius diam ridiculus iaculis inceptos. Ut nostra augue mus imperdiet finibus gravida ex ipsum. Elementum metus lectus adipiscing; pretium mi ultricies magna. Conubia ad scelerisque venenatis a diam rutrum, sed congue egestas.",
                             StartDate = DateTime.Now,
                             EndDate = DateTime.Now.AddDays(60),
                             StatusId = DTO.Enums.StatusEnum.Pending
                         },
-                        new Series("Series Three")
+                        new Series()
                         {
                             Id = seriesId3,
+                            Title = "Series Three",
                             Description = "Facilisis nulla turpis proin fames fusce condimentum praesent lacus dui.",
                             LongDescription = "Facilisis nulla turpis proin fames fusce condimentum praesent lacus dui. Aliquam conubia porta sem semper elementum venenatis nam nisi risus. Mus sem fames dolor suspendisse interdum tincidunt adipiscing. Morbi in cursus diam rhoncus cursus nec ullamcorper eros. Dolor torquent elementum nullam mi varius magnis ultricies. Mauris etiam vehicula primis fringilla tortor tincidunt maximus integer rutrum. Taciti tellus efficitur dolor torquent ipsum sodales. Eros justo dui arcu potenti; senectus duis nunc.",
                             StartDate = DateTime.Now,
@@ -72,9 +102,10 @@ namespace GDC.EventHost.API.DbContexts
                 if (!context.Events.Any())
                 {
                     context.Events.AddRange(
-                        new Event("One : Prow Scuttle Parrel")
+                        new Event()
                         {
                             Id = eventId1,
+                            Title = "One : Prow Scuttle Parrel",
                             Description = "Prow scuttle parrel provost Sail ho shrouds spirits boom mizzenmast yardarm.",
                             LongDescription = "Prow scuttle parrel provost Sail ho shrouds spirits boom mizzenmast yardarm. Pinnace holystone mizzenmast quarter crow's nest nipperkin grog yardarm hempen halter furl. Swab barque interloper chantey doubloon starboard grog black jack gangway rutters.",
                             SeriesId = seriesId1,
@@ -82,9 +113,10 @@ namespace GDC.EventHost.API.DbContexts
                             EndDate = DateTime.Now.AddDays(20),
                             StatusId = DTO.Enums.StatusEnum.Pending
                         },
-                        new Event("Two : Deadlights Jack Lad Schooner")
+                        new Event()
                         {
                             Id = eventId2,
+                            Title = "Two : Deadlights Jack Lad Schooner",
                             Description = "Deadlights jack lad schooner scallywag dance the hempen jig carouser.",
                             LongDescription = "Deadlights jack lad schooner scallywag dance the hempen jig carouser broadside cable strike colors. Bring a spring upon her cable holystone blow the man down spanker Shiver me timbers to go on account lookout wherry doubloon chase. Belay yo-ho-ho keelhaul squiffy black spot yardarm spyglass sheet transom heave to.",
                             SeriesId = seriesId2,
@@ -92,9 +124,10 @@ namespace GDC.EventHost.API.DbContexts
                             EndDate = DateTime.Now.AddDays(20),
                             StatusId = DTO.Enums.StatusEnum.Pending
                         },
-                        new Event("Three : Trysail Sail ho Corsair")
+                        new Event()
                         {
                             Id = eventId3,
+                            Title = "Three : Trysail Sail ho Corsair",
                             Description = "Trysail Sail ho Corsair red ensign hulk smartly boom jib rum gangway.",
                             LongDescription = "Trysail Sail ho Corsair red ensign hulk smartly boom jib rum gangway. Case shot Shiver me timbers gangplank crack Jennys tea cup ballast Blimey lee snow crow's nest rutters. Fluke jib scourge of the seven seas boatswain schooner gaff booty Jack Tar transom spirits.",
                             SeriesId = seriesId3,
@@ -109,62 +142,80 @@ namespace GDC.EventHost.API.DbContexts
                 if (!context.Performances.Any())
                 {
                     context.Performances.AddRange(
-                        new Performance("Event One - Performance One")
+                        new Performance()
                         {
                             Id = performanceId1,
+                            Title = "Event One - Performance One",
                             Date = DateTime.Now.AddDays(7),
+                            Event = context.Events.First(e => e.Id == eventId1),
                             EventId = eventId1,
-                            PerformanceTypeId = performanceTypeId,
+                            PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId1),
+                            PerformanceTypeId = performanceTypeId1,
                             VenueId = venueId1,
                             StatusId = DTO.Enums.StatusEnum.Pending,
                             SeatingPlanId = null
                         },
-                        new Performance("Event One - Performance Two")
+                        new Performance()
                         {
                             Id = performanceId2,
+                            Title = "Event One - Performance Two",
                             Date = DateTime.Now.AddDays(14),
+                            Event = context.Events.First(e => e.Id == eventId1),
                             EventId = eventId1,
-                            PerformanceTypeId = performanceTypeId,
+                            PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId1),
+                            PerformanceTypeId = performanceTypeId1,
                             VenueId = venueId1,
                             StatusId = DTO.Enums.StatusEnum.Pending,
                             SeatingPlanId = null
                         },
-                        new Performance("Event One - Performance Three")
+                        new Performance()
                         {
                             Id = performanceId3,
+                            Title = "Event One - Performance Three",
                             Date = DateTime.Now.AddDays(21),
+                            Event = context.Events.First(e => e.Id == eventId1),
                             EventId = eventId1,
-                            PerformanceTypeId = performanceTypeId,
+                            PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId1),
+                            PerformanceTypeId = performanceTypeId1,
                             VenueId = venueId1,
                             StatusId = DTO.Enums.StatusEnum.Pending,
                             SeatingPlanId = null
                         },
-                        new Performance("Event Two - Performance One")
+                        new Performance()
                         {
                             Id = performanceId4,
+                            Title = "Event Two - Performance One",
                             Date = DateTime.Now.AddDays(28),
+                            Event = context.Events.First(e => e.Id == eventId2),
                             EventId = eventId2,
-                            PerformanceTypeId = performanceTypeId,
+                            PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId2),
+                            PerformanceTypeId = performanceTypeId2,
                             VenueId = venueId2,
                             StatusId = DTO.Enums.StatusEnum.Pending,
                             SeatingPlanId = null
                         },
-                        new Performance("Event Two - Performance Two")
+                        new Performance()
                         {
                             Id = performanceId5,
+                            Title = "Event Two - Performance Two",
                             Date = DateTime.Now.AddDays(35),
+                            Event = context.Events.First(e => e.Id == eventId2),
                             EventId = eventId2,
-                            PerformanceTypeId = performanceTypeId,
+                            PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId2),
+                            PerformanceTypeId = performanceTypeId2,
                             VenueId = venueId1,
                             StatusId = DTO.Enums.StatusEnum.Pending,
                             SeatingPlanId = null
                         },
-                        new Performance("Event Three - Performance One")
+                        new Performance()
                         {
                             Id = performanceId6,
+                            Title = "Event Three - Performance One",
                             Date = DateTime.Now.AddDays(42),
+                            Event = context.Events.First(e => e.Id == eventId3),
                             EventId = eventId3,
-                            PerformanceTypeId = performanceTypeId,
+                            PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId3),
+                            PerformanceTypeId = performanceTypeId3,
                             VenueId = venueId2,
                             StatusId = DTO.Enums.StatusEnum.Pending,
                             SeatingPlanId = null

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GDC.EventHost.API.Migrations
 {
     [DbContext(typeof(EventHostContext))]
-    [Migration("20241213082411_init")]
-    partial class init
+    [Migration("20241221124200_Initialize")]
+    partial class Initialize
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,8 @@ namespace GDC.EventHost.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SeriesId");
+
                     b.ToTable("Events");
                 });
 
@@ -94,7 +96,71 @@ namespace GDC.EventHost.API.Migrations
 
                     b.HasIndex("EventId");
 
+                    b.HasIndex("PerformanceTypeId");
+
                     b.ToTable("Performances");
+                });
+
+            modelBuilder.Entity("GDC.EventHost.API.Entities.PerformanceType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PerformanceTypes");
+                });
+
+            modelBuilder.Entity("GDC.EventHost.API.Entities.Series", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LongDescription")
+                        .HasMaxLength(1500)
+                        .HasColumnType("nvarchar(1500)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Series");
+                });
+
+            modelBuilder.Entity("GDC.EventHost.API.Entities.Event", b =>
+                {
+                    b.HasOne("GDC.EventHost.API.Entities.Series", "Series")
+                        .WithMany("Events")
+                        .HasForeignKey("SeriesId");
+
+                    b.Navigation("Series");
                 });
 
             modelBuilder.Entity("GDC.EventHost.API.Entities.Performance", b =>
@@ -105,12 +171,30 @@ namespace GDC.EventHost.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GDC.EventHost.API.Entities.PerformanceType", "PerformanceType")
+                        .WithMany("Performances")
+                        .HasForeignKey("PerformanceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Event");
+
+                    b.Navigation("PerformanceType");
                 });
 
             modelBuilder.Entity("GDC.EventHost.API.Entities.Event", b =>
                 {
                     b.Navigation("Performances");
+                });
+
+            modelBuilder.Entity("GDC.EventHost.API.Entities.PerformanceType", b =>
+                {
+                    b.Navigation("Performances");
+                });
+
+            modelBuilder.Entity("GDC.EventHost.API.Entities.Series", b =>
+                {
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }

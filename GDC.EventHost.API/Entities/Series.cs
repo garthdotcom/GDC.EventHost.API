@@ -12,7 +12,7 @@ namespace GDC.EventHost.API.Entities
 
         [Required]
         [MaxLength(150)]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         public DateTime? StartDate { get; set; }
 
@@ -28,10 +28,5 @@ namespace GDC.EventHost.API.Entities
         public StatusEnum StatusId { get; set; }
 
         public List<Event> Events { get; set; } = [];
-
-        public Series(string title)
-        {
-            Title = title;
-        }
     }
 }
