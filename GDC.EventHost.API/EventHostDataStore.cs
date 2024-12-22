@@ -41,7 +41,6 @@ namespace GDC.EventHost.API
                     Date = DateTime.Now.AddDays(7),
                     EventId = eventId1,
                     PerformanceTypeId = performanceTypeId,
-                    VenueId = venueId1,
                     Title = "Performance One"
                 },
                 new ()
@@ -50,7 +49,6 @@ namespace GDC.EventHost.API
                     Date = DateTime.Now.AddDays(14),
                     EventId = eventId1,
                     PerformanceTypeId = performanceTypeId,
-                    VenueId = venueId1,
                     Title = "Performance Two"
                 },
                 new ()
@@ -59,7 +57,6 @@ namespace GDC.EventHost.API
                     Date = DateTime.Now.AddDays(21),
                     EventId = eventId1,
                     PerformanceTypeId = performanceTypeId,
-                    VenueId = venueId1,
                     Title = "Performance Three"
                 },
                 new ()
@@ -68,7 +65,6 @@ namespace GDC.EventHost.API
                     Date = DateTime.Now.AddDays(5),
                     EventId = eventId2,
                     PerformanceTypeId = performanceTypeId,
-                    VenueId = venueId2,
                     Title = "Performance Four"
                 },
                 new ()
@@ -77,7 +73,6 @@ namespace GDC.EventHost.API
                     Date = DateTime.Now.AddDays(10),
                     EventId = eventId2,
                     PerformanceTypeId = performanceTypeId,
-                    VenueId = venueId1,
                     Title = "Performance Five"
                 },
                 new ()
@@ -86,7 +81,6 @@ namespace GDC.EventHost.API
                     Date = DateTime.Now.AddDays(5),
                     EventId = eventId3,
                     PerformanceTypeId = performanceTypeId,
-                    VenueId = venueId2,
                     Title = "Performance Six"
                 }
             ];

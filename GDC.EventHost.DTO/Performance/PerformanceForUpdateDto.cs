@@ -18,23 +18,10 @@ namespace GDC.EventHost.DTO.Performance
             ErrorMessage = "The Performance Type Id must be a valid Guid.")]
         public required Guid PerformanceTypeId { get; set; }
 
-        [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
-
         [Display(Name = "Event Id")]
         [Required(ErrorMessage = "You should enter an Event Id.")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
             ErrorMessage = "The Event Id must be a valid Guid.")]
         public required Guid EventId { get; set; }
-
-        [Display(Name = "Venue Id")]
-        [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
-            ErrorMessage = "If specified, the Venue Id must be a valid Guid.")]
-        public Guid? VenueId { get; set; }
-
-        [Display(Name = "Seating Plan Id")]
-        [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
-            ErrorMessage = "If specified, the Seating Plan Id must be a valid Guid.")]
-        public Guid? SeatingPlanId { get; set; }
     }
 }

@@ -23,13 +23,6 @@ namespace GDC.EventHost.API.Entities
         public Guid PerformanceTypeId { get; set; }
 
         [Required]
-        public StatusEnum StatusId { get; set; }
-
-        public Guid? VenueId { get; set; }
-
-        public Guid? SeatingPlanId { get; set; }
-
-        [Required]
         [ForeignKey("EventId")]
         public required Event Event { get; set; }
         public Guid EventId { get; set; }

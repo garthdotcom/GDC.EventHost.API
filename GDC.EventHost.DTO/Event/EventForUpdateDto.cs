@@ -19,9 +19,6 @@ namespace GDC.EventHost.DTO.Event
         [MaxLength(1500, ErrorMessage = "The long description should not be longer than 1500 characters.")]
         public string? LongDescription { get; set; }
 
-        [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
-
         [Display(Name = "Start Date")]
         [StartDateMustBeFuture]
         public DateTime? StartDate { get; set; }

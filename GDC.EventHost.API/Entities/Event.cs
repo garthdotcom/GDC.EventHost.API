@@ -24,9 +24,6 @@ namespace GDC.EventHost.API.Entities
         [MaxLength(1500)]
         public string? LongDescription { get; set; }
 
-        [Required]
-        public StatusEnum StatusId { get; set; }
-
         [ForeignKey("SeriesId")]
         public Series? Series { get; set; }
         public Guid? SeriesId { get; set; }

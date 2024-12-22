@@ -16,16 +16,7 @@ namespace GDC.EventHost.DTO.Performance
         [Display(Name = "Performance Type Id")]
         public required Guid PerformanceTypeId { get; set; }
 
-        [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
-
         [Display(Name = "Event Id")]
         public required Guid EventId { get; set; }
-
-        [Display(Name = "Venue Id")]
-        public Guid? VenueId { get; set; }
-
-        [Display(Name = "Seating Plan Id")]
-        public Guid? SeatingPlanId { get; set; }
     }
 }

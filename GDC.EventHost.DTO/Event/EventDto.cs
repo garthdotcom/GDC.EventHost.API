@@ -24,9 +24,6 @@ namespace GDC.EventHost.DTO.Event
         [Display(Name = "Long Description")]
         public string? LongDescription { get; set; }
 
-        [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
-
         [Display(Name = "Series Id")]
         public Guid? SeriesId { get; set; }
 

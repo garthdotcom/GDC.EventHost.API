@@ -26,8 +26,5 @@ namespace GDC.EventHost.DTO.Series
         [Display(Name = "End Date")]
         [EndDateMustBeLaterThanStartDate]
         public DateTime? EndDate { get; set; }
-
-        [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
     }
 }
