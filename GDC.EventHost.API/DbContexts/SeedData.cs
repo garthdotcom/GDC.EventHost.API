@@ -1,4 +1,5 @@
 ﻿using GDC.EventHost.API.Entities;
+using GDC.EventHost.DTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace GDC.EventHost.API.DbContexts
@@ -37,6 +38,27 @@ namespace GDC.EventHost.API.DbContexts
                 var venueId1 = new Guid("76824d3e-78b7-4284-8117-a238c38c3dc7");
                 var venueId2 = new Guid("aa9d1367-1d71-4cb9-98b1-633b940967ee");
 
+                if (!context.Statuses.Any())
+                {
+                    context.Statuses.AddRange(
+                        new Status()
+                        {
+                            Id = Enums.StatusEnum.Active,
+                            Name = Enums.StatusEnum.Active.ToString()
+                        },
+                        new Status()
+                        {
+                            Id = Enums.StatusEnum.Pending,
+                            Name = Enums.StatusEnum.Pending.ToString()
+                        },
+                        new Status()
+                        {
+                            Id = Enums.StatusEnum.Deleted,
+                            Name = Enums.StatusEnum.Deleted.ToString()
+                        }
+                     );
+                    context.SaveChanges();
+                }
 
                 if (!context.PerformanceTypes.Any())
                 {
@@ -60,6 +82,7 @@ namespace GDC.EventHost.API.DbContexts
                             Description = "Some text describing what the type Lecture is about."
                         }
                     );
+                    context.SaveChanges();
                 }
 
                 if (!context.Series.Any())
@@ -72,7 +95,9 @@ namespace GDC.EventHost.API.DbContexts
                             Description = "Integer tempus himenaeos suscipit penatibus mauris a a ultrices netus.",
                             LongDescription = "Integer tempus himenaeos suscipit penatibus mauris a a ultrices netus. Vel torquent iaculis dictum; hac sem habitant dis dictumst. Ligula mattis vulputate taciti vitae tellus. Dignissim felis cursus hac arcu ultricies. Primis vel quam interdum ut parturient eu proin. Eu justo rhoncus etiam pellentesque pretium varius. Aenean eros id senectus ligula ac praesent.",
                             StartDate = DateTime.Now,
-                            EndDate = DateTime.Now.AddDays(60)
+                            EndDate = DateTime.Now.AddDays(60),
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Series()
                         {
@@ -81,7 +106,9 @@ namespace GDC.EventHost.API.DbContexts
                             Description = "Sagittis varius justo aliquam dignissim nascetur mauris neque.",
                             LongDescription = "Sagittis varius justo aliquam dignissim nascetur mauris neque. Eleifend adipiscing vehicula fusce ac tempus himenaeos. Afusce habitasse sit magnis facilisi aptent lacinia. Magnis tristique lorem tincidunt cubilia aliquet. Ante mus consectetur vel id et. Dui euismod aenean porta varius diam ridiculus iaculis inceptos. Ut nostra augue mus imperdiet finibus gravida ex ipsum. Elementum metus lectus adipiscing; pretium mi ultricies magna. Conubia ad scelerisque venenatis a diam rutrum, sed congue egestas.",
                             StartDate = DateTime.Now,
-                            EndDate = DateTime.Now.AddDays(60)
+                            EndDate = DateTime.Now.AddDays(60),
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Series()
                         {
@@ -90,7 +117,9 @@ namespace GDC.EventHost.API.DbContexts
                             Description = "Facilisis nulla turpis proin fames fusce condimentum praesent lacus dui.",
                             LongDescription = "Facilisis nulla turpis proin fames fusce condimentum praesent lacus dui. Aliquam conubia porta sem semper elementum venenatis nam nisi risus. Mus sem fames dolor suspendisse interdum tincidunt adipiscing. Morbi in cursus diam rhoncus cursus nec ullamcorper eros. Dolor torquent elementum nullam mi varius magnis ultricies. Mauris etiam vehicula primis fringilla tortor tincidunt maximus integer rutrum. Taciti tellus efficitur dolor torquent ipsum sodales. Eros justo dui arcu potenti; senectus duis nunc.",
                             StartDate = DateTime.Now,
-                            EndDate = DateTime.Now.AddDays(60)
+                            EndDate = DateTime.Now.AddDays(60),
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         }
                     );
                     context.SaveChanges();
@@ -107,7 +136,9 @@ namespace GDC.EventHost.API.DbContexts
                             LongDescription = "Prow scuttle parrel provost Sail ho shrouds spirits boom mizzenmast yardarm. Pinnace holystone mizzenmast quarter crow's nest nipperkin grog yardarm hempen halter furl. Swab barque interloper chantey doubloon starboard grog black jack gangway rutters.",
                             SeriesId = seriesId1,
                             StartDate = DateTime.Now.AddDays(5),
-                            EndDate = DateTime.Now.AddDays(20)
+                            EndDate = DateTime.Now.AddDays(20),
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Event()
                         {
@@ -117,7 +148,9 @@ namespace GDC.EventHost.API.DbContexts
                             LongDescription = "Deadlights jack lad schooner scallywag dance the hempen jig carouser broadside cable strike colors. Bring a spring upon her cable holystone blow the man down spanker Shiver me timbers to go on account lookout wherry doubloon chase. Belay yo-ho-ho keelhaul squiffy black spot yardarm spyglass sheet transom heave to.",
                             SeriesId = seriesId2,
                             StartDate = DateTime.Now.AddDays(5),
-                            EndDate = DateTime.Now.AddDays(20)
+                            EndDate = DateTime.Now.AddDays(20),
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Event()
                         {
@@ -127,7 +160,9 @@ namespace GDC.EventHost.API.DbContexts
                             LongDescription = "Trysail Sail ho Corsair red ensign hulk smartly boom jib rum gangway. Case shot Shiver me timbers gangplank crack Jennys tea cup ballast Blimey lee snow crow's nest rutters. Fluke jib scourge of the seven seas boatswain schooner gaff booty Jack Tar transom spirits.",
                             SeriesId = seriesId3,
                             StartDate = DateTime.Now.AddDays(5),
-                            EndDate = DateTime.Now.AddDays(20)
+                            EndDate = DateTime.Now.AddDays(20),
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         }
                     );
                     context.SaveChanges();
@@ -144,7 +179,9 @@ namespace GDC.EventHost.API.DbContexts
                             Event = context.Events.First(e => e.Id == eventId1),
                             EventId = eventId1,
                             PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId1),
-                            PerformanceTypeId = performanceTypeId1
+                            PerformanceTypeId = performanceTypeId1,
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Performance()
                         {
@@ -154,7 +191,9 @@ namespace GDC.EventHost.API.DbContexts
                             Event = context.Events.First(e => e.Id == eventId1),
                             EventId = eventId1,
                             PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId1),
-                            PerformanceTypeId = performanceTypeId1
+                            PerformanceTypeId = performanceTypeId1,
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Performance()
                         {
@@ -164,7 +203,8 @@ namespace GDC.EventHost.API.DbContexts
                             Event = context.Events.First(e => e.Id == eventId1),
                             EventId = eventId1,
                             PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId1),
-                            PerformanceTypeId = performanceTypeId1
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Performance()
                         {
@@ -174,7 +214,9 @@ namespace GDC.EventHost.API.DbContexts
                             Event = context.Events.First(e => e.Id == eventId2),
                             EventId = eventId2,
                             PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId2),
-                            PerformanceTypeId = performanceTypeId2
+                            PerformanceTypeId = performanceTypeId2,
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Performance()
                         {
@@ -184,7 +226,9 @@ namespace GDC.EventHost.API.DbContexts
                             Event = context.Events.First(e => e.Id == eventId2),
                             EventId = eventId2,
                             PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId2),
-                            PerformanceTypeId = performanceTypeId2
+                            PerformanceTypeId = performanceTypeId2,
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         },
                         new Performance()
                         {
@@ -194,7 +238,9 @@ namespace GDC.EventHost.API.DbContexts
                             Event = context.Events.First(e => e.Id == eventId3),
                             EventId = eventId3,
                             PerformanceType = context.PerformanceTypes.First(p => p.Id == performanceTypeId3),
-                            PerformanceTypeId = performanceTypeId3
+                            PerformanceTypeId = performanceTypeId3,
+                            StatusId = Enums.StatusEnum.Pending,
+                            Status = context.Statuses.First(s => s.Id == Enums.StatusEnum.Pending)
                         }
                     );
                     context.SaveChanges();

@@ -26,5 +26,10 @@ namespace GDC.EventHost.API.Entities
         [ForeignKey("EventId")]
         public required Event Event { get; set; }
         public Guid EventId { get; set; }
+
+        [Required]
+        [ForeignKey("StatusId")]
+        public required Status Status { get; set; }
+        public StatusEnum StatusId { get; set; }
     }
 }

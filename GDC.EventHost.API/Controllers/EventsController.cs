@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GDC.EventHost.API.ResourceParameters;
 using GDC.EventHost.API.Services;
 using GDC.EventHost.DTO.Event;
 using Microsoft.AspNetCore.Authorization;
@@ -34,40 +35,46 @@ namespace GDC.EventHost.API.Controllers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
+        
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventWithoutPerformancesDto>>> GetEvents(
-            [FromQuery] string? title, string? searchQuery, int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(
+            [FromQuery] EventResourceParameters eventResourceParameters)
         {
-            if (pageSize > maxPageSize)
+            if (eventResourceParameters.PageSize > maxPageSize)
             {
-                pageSize = maxPageSize;
+                eventResourceParameters.PageSize = maxPageSize;
             }
 
             var (eventEntities, paginationMetadata) = await _eventHostRepository
-                .GetEventsAsync(title, searchQuery, pageNumber, pageSize);
+                .GetEventsAsync(eventResourceParameters);
 
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 
-            return Ok(_mapper.Map<IEnumerable<EventWithoutPerformancesDto>>(eventEntities));
+            if (eventResourceParameters.IncludeDetail)
+            {
+                return Ok(_mapper.Map<IEnumerable<EventDetailDto>>(eventEntities));
+            }
+
+            return Ok(_mapper.Map<IEnumerable<EventDto>>(eventEntities));
         }
 
 
         [HttpGet("{eventId}", Name = "GetEvent")]
-        public async Task<ActionResult> GetEvent(Guid eventId, bool includePerformances)
+        public async Task<ActionResult> GetEvent(Guid eventId, bool includeDetail)
         {
-            var entity = await _eventHostRepository.GetEventAsync(eventId, includePerformances);
+            var entity = await _eventHostRepository.GetEventAsync(eventId, includeDetail);
 
             if (entity == null)
             {
                 return NotFound();
             }
 
-            if (includePerformances)
+            if (includeDetail)
             {
-                return Ok(_mapper.Map<EventDto>(entity));
+                return Ok(_mapper.Map<EventDetailDto>(entity));
             }
 
-            return Ok(_mapper.Map<EventWithoutPerformancesDto>(entity));
+            return Ok(_mapper.Map<EventDto>(entity));
         }
 
 
@@ -120,7 +127,7 @@ namespace GDC.EventHost.API.Controllers
             }
 
             var eventEntity = await _eventHostRepository
-                .GetEventForSeriesAsync(seriesId, eventId);
+                .GetEventForSeriesAsync(seriesId, eventId, false);
 
             if (eventEntity == null)
             {
@@ -155,7 +162,7 @@ namespace GDC.EventHost.API.Controllers
             }
 
             var eventEntity = await _eventHostRepository
-                .GetEventForSeriesAsync(seriesId, eventId);
+                .GetEventForSeriesAsync(seriesId, eventId, false);
 
             if (eventEntity == null)
             {
@@ -206,7 +213,7 @@ namespace GDC.EventHost.API.Controllers
             }
 
             var eventEntity = await _eventHostRepository
-                .GetEventForSeriesAsync(seriesId, eventId);
+                .GetEventForSeriesAsync(seriesId, eventId, false);
 
             if (eventEntity == null)
             {

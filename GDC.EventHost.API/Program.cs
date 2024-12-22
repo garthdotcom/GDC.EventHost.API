@@ -61,8 +61,6 @@ builder.Services.AddTransient<IMailService, LocalMailService>();
 builder.Services.AddTransient<IMailService, CloudMailService>();
 #endif
 
-builder.Services.AddSingleton<EventHostDataStore>();
-
 builder.Services.AddDbContext<EventHostContext>(dbContextOptions
     => {dbContextOptions.UseSqlServer(
             builder.Configuration["ConnectionStrings:EventHostDBConnectionString"]);
@@ -81,8 +79,6 @@ if (builder.Environment.IsProduction())
         new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
         new DefaultAzureCredential());
 }
-
-// reverting back due to 404 post-deployment error
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
@@ -115,11 +111,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-//}
+}
 
 using (var scope = app.Services.CreateScope())
 {

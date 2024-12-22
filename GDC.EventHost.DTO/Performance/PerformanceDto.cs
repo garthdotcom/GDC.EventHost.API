@@ -18,5 +18,8 @@ namespace GDC.EventHost.DTO.Performance
 
         [Display(Name = "Event Id")]
         public required Guid EventId { get; set; }
+
+        [Display(Name = "Status Id")]
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
     }
 }

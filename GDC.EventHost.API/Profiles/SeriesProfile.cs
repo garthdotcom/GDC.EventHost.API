@@ -7,8 +7,15 @@ namespace GDC.EventHost.API.Profiles
     {
         public SeriesProfile()
         {
-            CreateMap<Entities.Series, SeriesWithoutEventsDto>();
+            CreateMap<Entities.Series, SeriesDetailDto>()
+                .ForMember(
+                    dest => dest.StatusValue,
+                    opt => opt.MapFrom(src => src.StatusId));
+            CreateMap<SeriesDetailDto, Entities.Series>();
+
             CreateMap<Entities.Series, SeriesDto>();
+            CreateMap<SeriesDto, Entities.Series>();
+
             CreateMap<SeriesForUpdateDto, Entities.Series>();
             CreateMap<Entities.Series, SeriesForUpdateDto>();
         }

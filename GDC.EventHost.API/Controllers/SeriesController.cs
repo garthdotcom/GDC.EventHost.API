@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GDC.EventHost.API.ResourceParameters;
 using GDC.EventHost.API.Services;
 using GDC.EventHost.DTO.Series;
 using Microsoft.AspNetCore.Authorization;
@@ -34,40 +35,45 @@ namespace GDC.EventHost.API.Controllers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SeriesWithoutEventsDto>>> GetSeries(
-            [FromQuery] string? title, string? searchQuery, int pageNumber = 1, int pageSize = 10)
+            [FromQuery] SeriesResourceParameters seriesResourceParameters)
         {
-            if (pageSize > maxPageSize)
-            {
-                pageSize = maxPageSize;
-            }
+            var pageSize = seriesResourceParameters.PageSize > maxPageSize
+                ? maxPageSize 
+                : seriesResourceParameters.PageSize;
 
             var (seriesEntities, paginationMetadata) = await _eventHostRepository
-                .GetSeriesAsync(title, searchQuery, pageNumber, pageSize);
+                .GetSeriesAsync(seriesResourceParameters);
 
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 
-            return Ok(_mapper.Map<IEnumerable<SeriesWithoutEventsDto>>(seriesEntities));
+            if (seriesResourceParameters.IncludeDetail)
+            {
+                return Ok(_mapper.Map<IEnumerable<SeriesDetailDto>>(seriesEntities));
+            }
+
+            return Ok(_mapper.Map<IEnumerable<SeriesDto>>(seriesEntities));
         }
 
 
         [HttpGet("{id}", Name = "GetSeries")]
-        public async Task<IActionResult> GetSeries(Guid id, bool includeEvents)
+        public async Task<ActionResult> GetSeries(Guid id, bool includeDetail = false)
         {
-            var entity = await _eventHostRepository.GetSeriesAsync(id, includeEvents);
+            var entity = await _eventHostRepository.GetSeriesAsync(id, includeDetail);
 
             if (entity == null)
             {
                 return NotFound();
             }
 
-            if (includeEvents)
+            if (includeDetail)
             {
-                return Ok(_mapper.Map<SeriesDto>(entity));
+                return Ok(_mapper.Map<SeriesDetailDto>(entity));
             }
 
-            return Ok(_mapper.Map<SeriesWithoutEventsDto>(entity));
+            return Ok(_mapper.Map<SeriesDto>(entity));
         }
 
 

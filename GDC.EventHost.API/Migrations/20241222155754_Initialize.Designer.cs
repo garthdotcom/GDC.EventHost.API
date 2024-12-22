@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GDC.EventHost.API.Migrations
 {
     [DbContext(typeof(EventHostContext))]
-    [Migration("20241222135435_RemoveStatusId")]
-    partial class RemoveStatusId
+    [Migration("20241222155754_Initialize")]
+    partial class Initialize
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,11 +31,24 @@ namespace GDC.EventHost.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LongDescription")
@@ -48,6 +61,9 @@ namespace GDC.EventHost.API.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -56,6 +72,8 @@ namespace GDC.EventHost.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SeriesId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Events");
                 });
@@ -66,31 +84,43 @@ namespace GDC.EventHost.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("PerformanceTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("SeatingPlanId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<Guid?>("VenueId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
 
                     b.HasIndex("PerformanceTypeId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Performances");
                 });
@@ -101,9 +131,22 @@ namespace GDC.EventHost.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -121,11 +164,24 @@ namespace GDC.EventHost.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LongDescription")
@@ -135,6 +191,9 @@ namespace GDC.EventHost.API.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -142,7 +201,37 @@ namespace GDC.EventHost.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StatusId");
+
                     b.ToTable("Series");
+                });
+
+            modelBuilder.Entity("GDC.EventHost.API.Entities.Status", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Statuses");
                 });
 
             modelBuilder.Entity("GDC.EventHost.API.Entities.Event", b =>
@@ -151,7 +240,15 @@ namespace GDC.EventHost.API.Migrations
                         .WithMany("Events")
                         .HasForeignKey("SeriesId");
 
+                    b.HasOne("GDC.EventHost.API.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Series");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("GDC.EventHost.API.Entities.Performance", b =>
@@ -168,9 +265,28 @@ namespace GDC.EventHost.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GDC.EventHost.API.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Event");
 
                     b.Navigation("PerformanceType");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("GDC.EventHost.API.Entities.Series", b =>
+                {
+                    b.HasOne("GDC.EventHost.API.Entities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("GDC.EventHost.API.Entities.Event", b =>

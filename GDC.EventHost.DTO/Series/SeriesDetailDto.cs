@@ -24,6 +24,12 @@ namespace GDC.EventHost.DTO.Series
         [Display(Name = "End Date")]
         public DateTime? EndDate { get; set; }
 
+        [Display(Name = "Status Id")]
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
+
+        [Display(Name = "Status Value")]
+        public string StatusValue { get; set; } = string.Empty;
+
         public List<EventDto> Events { get; set; } = [];
 
         public List<SeriesAssetDto> SeriesAssets { get; set; } = [];

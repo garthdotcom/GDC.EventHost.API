@@ -17,11 +17,31 @@ namespace GDC.EventHost.API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PerformanceTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Statuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Statuses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -34,11 +54,21 @@ namespace GDC.EventHost.API.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     LongDescription = table.Column<string>(type: "nvarchar(1500)", maxLength: 1500, nullable: true),
-                    StatusId = table.Column<int>(type: "int", nullable: false)
+                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Series", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Series_Statuses_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Statuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,8 +81,12 @@ namespace GDC.EventHost.API.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     LongDescription = table.Column<string>(type: "nvarchar(1500)", maxLength: 1500, nullable: true),
+                    SeriesId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     StatusId = table.Column<int>(type: "int", nullable: false),
-                    SeriesId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -62,6 +96,12 @@ namespace GDC.EventHost.API.Migrations
                         column: x => x.SeriesId,
                         principalTable: "Series",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Events_Statuses_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Statuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,10 +112,12 @@ namespace GDC.EventHost.API.Migrations
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     PerformanceTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StatusId = table.Column<int>(type: "int", nullable: false),
-                    VenueId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SeatingPlanId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -92,12 +134,23 @@ namespace GDC.EventHost.API.Migrations
                         principalTable: "PerformanceTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Performances_Statuses_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Statuses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_SeriesId",
                 table: "Events",
                 column: "SeriesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_StatusId",
+                table: "Events",
+                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Performances_EventId",
@@ -108,6 +161,16 @@ namespace GDC.EventHost.API.Migrations
                 name: "IX_Performances_PerformanceTypeId",
                 table: "Performances",
                 column: "PerformanceTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Performances_StatusId",
+                table: "Performances",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Series_StatusId",
+                table: "Series",
+                column: "StatusId");
         }
 
         /// <inheritdoc />
@@ -124,6 +187,9 @@ namespace GDC.EventHost.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Series");
+
+            migrationBuilder.DropTable(
+                name: "Statuses");
         }
     }
 }

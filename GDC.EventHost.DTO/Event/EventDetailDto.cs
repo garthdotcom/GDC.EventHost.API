@@ -10,7 +10,6 @@ namespace GDC.EventHost.DTO.Event
     {
         public Guid Id { get; set; }
 
-        [Required]
         [Display(Name = "Title")]
         public required string Title { get; set; }
 
@@ -29,11 +28,17 @@ namespace GDC.EventHost.DTO.Event
         [Display(Name = "Series Id")]
         public Guid? SeriesId { get; set; }
 
-        [Display(Name = "Series Name")]
-        public string SeriesName { get; set; } = string.Empty;
+        [Display(Name = "Series Title")]
+        public string SeriesTitle { get; set; } = string.Empty;
+
+        [Display(Name = "Status Id")]
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
+
+        [Display(Name = "Status Value")]
+        public string StatusValue { get; set; } = string.Empty;
 
         public List<PerformanceDetailDto> Performances { get; set; } = [];
 
-        public List<EventAssetDto> EventAssets { get; set; } = [];
+        //public List<EventAssetDto> EventAssets { get; set; } = [];
     }
 }

@@ -1,6 +1,4 @@
-﻿using GDC.EventHost.DTO.EventAsset;
-using GDC.EventHost.DTO.Performance;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.Event
@@ -27,8 +25,7 @@ namespace GDC.EventHost.DTO.Event
         [Display(Name = "Series Id")]
         public Guid? SeriesId { get; set; }
 
-        public List<PerformanceDto> Performances { get; set; } = [];
-
-        public List<EventAssetDto> EventAssets { get; set; } = [];
+        [Display(Name = "Status Id")]
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
     }
 }

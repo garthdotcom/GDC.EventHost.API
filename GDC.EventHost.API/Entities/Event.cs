@@ -28,6 +28,11 @@ namespace GDC.EventHost.API.Entities
         public Series? Series { get; set; }
         public Guid? SeriesId { get; set; }
 
+        [Required]
+        [ForeignKey("StatusId")]
+        public required Status Status { get; set; }
+        public StatusEnum StatusId { get; set; }
+
         public List<Performance> Performances { get; set; } = [];
     }
 }

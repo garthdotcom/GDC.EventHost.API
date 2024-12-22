@@ -4,7 +4,6 @@ using GDC.EventHost.DTO.Performance;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace GDC.EventHost.API.Controllers
 {
@@ -35,9 +34,12 @@ namespace GDC.EventHost.API.Controllers
                 throw new ArgumentNullException(nameof(mapper));
         }
 
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PerformanceDto>>> GetPerformances(Guid eventId,
-            string? title, string? searchQuery, int pageNumber = 1, int pageSize = 10)
+            string? title, string? searchQuery,
+            int pageNumber = 1, int pageSize = 10,
+            bool includeDetail = false)
         {
             try
             {
@@ -54,7 +56,12 @@ namespace GDC.EventHost.API.Controllers
                 }
 
                 var performanceEntities = await _eventHostRepository
-                    .GetPerformancesForEventAsync(eventId);
+                    .GetPerformancesForEventAsync(eventId, includeDetail);
+
+                if (includeDetail)
+                {
+                    return Ok(_mapper.Map<IEnumerable<PerformanceDetailDto>>(performanceEntities));
+                }
 
                 return Ok(_mapper.Map<IEnumerable<PerformanceDto>>(performanceEntities));
             }
@@ -69,7 +76,7 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpGet("{performanceId}", Name = "GetPerformance")]
-        public async Task<ActionResult> GetPerformance(Guid eventId, Guid performanceId)
+        public async Task<ActionResult> GetPerformance(Guid eventId, Guid performanceId, bool includeDetail)
         {
             if (!await _eventHostRepository.EventExistsAsync(eventId))
             {
@@ -78,12 +85,17 @@ namespace GDC.EventHost.API.Controllers
                 return NotFound();
             }
 
-            var performanceEntity = await _eventHostRepository.GetPerformanceForEventAsync(eventId, performanceId);
+            var performanceEntity = await _eventHostRepository.GetPerformanceForEventAsync(eventId, performanceId, includeDetail);
 
             if (performanceEntity == null)
             {
                 _logger.LogInformation("The requested performance id {PerfId} was not for event id {EventId}", performanceId, eventId);
                 return NotFound();
+            }
+
+            if (includeDetail)
+            {
+                return Ok(_mapper.Map<PerformanceDetailDto>(performanceEntity));
             }
 
             return Ok(_mapper.Map<PerformanceDto>(performanceEntity));
@@ -138,7 +150,7 @@ namespace GDC.EventHost.API.Controllers
             }
 
             var performanceEntity = await _eventHostRepository
-                .GetPerformanceForEventAsync(eventId, performanceId);
+                .GetPerformanceForEventAsync(eventId, performanceId, false);
 
             if (performanceEntity == null)
             {
@@ -173,7 +185,7 @@ namespace GDC.EventHost.API.Controllers
             }
 
             var performanceEntity = await _eventHostRepository
-                .GetPerformanceForEventAsync(eventId, performanceId);
+                .GetPerformanceForEventAsync(eventId, performanceId, false);
 
             if (performanceEntity == null)
             {
@@ -224,7 +236,7 @@ namespace GDC.EventHost.API.Controllers
             }
 
             var performanceEntity = await _eventHostRepository
-                .GetPerformanceForEventAsync(eventId, performanceId);
+                .GetPerformanceForEventAsync(eventId, performanceId, false);
 
             if (performanceEntity == null)
             {

@@ -1,4 +1,5 @@
 ﻿using GDC.EventHost.API.Entities;
+using GDC.EventHost.API.ResourceParameters;
 
 namespace GDC.EventHost.API.Services
 {
@@ -11,25 +12,25 @@ namespace GDC.EventHost.API.Services
         Task<IEnumerable<Event>> GetEventsAsync();
 
         Task<(IEnumerable<Series>, PaginationMetadata)> GetSeriesAsync(
-            string? title, string? searchQuery, int pageNumber, int pageSize);
+            SeriesResourceParameters seriesResourceParameters);
 
         Task<(IEnumerable<Event>, PaginationMetadata)> GetEventsAsync(
-            string? title, string? searchQuery, int pageNumber, int pageSize);
+            EventResourceParameters eventResourceParameters);
 
-        Task<IEnumerable<Event>> GetEventsForSeriesAsync(Guid seriesId);
+        Task<IEnumerable<Event>> GetEventsForSeriesAsync(Guid seriesId, bool includeDetail);
 
-        Task<IEnumerable<Performance>> GetPerformancesForEventAsync(Guid eventId);
+        Task<IEnumerable<Performance>> GetPerformancesForEventAsync(Guid eventId, bool includeDetail);
 
 
         // Get Single
 
-        Task<Series?> GetSeriesAsync(Guid seriesId, bool includeEvents);
+        Task<Series?> GetSeriesAsync(Guid seriesId, bool includeDetail);
 
-        Task<Event?> GetEventAsync(Guid eventId, bool includePerformances);
+        Task<Event?> GetEventAsync(Guid eventId, bool includeDetail = false);
 
-        Task<Event?> GetEventForSeriesAsync(Guid seriesId, Guid eventId);
+        Task<Event?> GetEventForSeriesAsync(Guid seriesId, Guid eventId, bool includeDetail);
 
-        Task<Performance?> GetPerformanceForEventAsync(Guid eventId, Guid performanceId);
+        Task<Performance?> GetPerformanceForEventAsync(Guid eventId, Guid performanceId, bool includeDetail);
 
 
         // Add

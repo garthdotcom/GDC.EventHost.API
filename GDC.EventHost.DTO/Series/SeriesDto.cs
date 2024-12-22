@@ -1,5 +1,4 @@
 ﻿using GDC.EventHost.DTO.Event;
-using GDC.EventHost.DTO.Performance;
 using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
@@ -23,6 +22,9 @@ namespace GDC.EventHost.DTO.Series
 
         [Display(Name = "End Date")]
         public DateTime? EndDate { get; set; }
+
+        [Display(Name = "Status Id")]
+        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
 
         public List<EventDto> Events { get; set; } = [];
     }
