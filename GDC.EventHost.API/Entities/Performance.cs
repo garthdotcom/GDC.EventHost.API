@@ -13,9 +13,8 @@ namespace GDC.EventHost.API.Entities
         [Required]
         public DateTime Date { get; set; }
 
-        [Required]
         [MaxLength(150)]
-        public required string Title { get; set; }
+        public string? Title { get; set; }
 
         [Required]
         [ForeignKey("PerformanceTypeId")]
@@ -31,5 +30,10 @@ namespace GDC.EventHost.API.Entities
         [ForeignKey("StatusId")]
         public required Status Status { get; set; }
         public StatusEnum StatusId { get; set; }
+
+        [Required]
+        [ForeignKey("VenueId")]
+        public required Venue Venue { get; set; }
+        public Guid VenueId { get; set; }
     }
 }

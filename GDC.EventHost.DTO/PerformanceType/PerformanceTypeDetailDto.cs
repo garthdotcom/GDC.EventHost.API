@@ -11,7 +11,7 @@ namespace GDC.EventHost.DTO.PerformanceType
         public required string Name { get; set; }
 
         [Display(Name = "Description")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         public List<PerformanceDetailDto> Performances { get; set; } = [];
     }

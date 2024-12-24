@@ -1,4 +1,4 @@
-﻿using GDC.EventHost.DTO.Series.ValidationAttributes;
+﻿using GDC.EventHost.DTO.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
@@ -13,18 +13,24 @@ namespace GDC.EventHost.DTO.Series
 
         [Display(Name = "Description")]
         [MaxLength(250, ErrorMessage = "The description should not be longer than 250 characters.")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         [Display(Name = "Long Description")]
         [MaxLength(1500, ErrorMessage = "The long description should not be longer than 1500 characters.")]
-        public string LongDescription { get; set; } = string.Empty;
+        public string? LongDescription { get; set; }
 
         [Display(Name = "Start Date")]
-        [StartDateMustBeFuture]
+        [DateIsFutureOrNull]
         public DateTime? StartDate { get; set; }
 
         [Display(Name = "End Date")]
-        [EndDateMustBeLaterThanStartDate]
+        [DateIsFutureOrNull]
+        [DateRangeIsValid("StartDate")]
         public DateTime? EndDate { get; set; }
+
+        [Display(Name = "Status Id")]
+        [Required(ErrorMessage = "You should enter a Status Id.")]
+        [StatusIsValid]
+        public required StatusEnum StatusId { get; set; }
     }
 }

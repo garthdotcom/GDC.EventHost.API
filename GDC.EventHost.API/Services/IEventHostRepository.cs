@@ -11,6 +11,8 @@ namespace GDC.EventHost.API.Services
 
         Task<IEnumerable<Event>> GetEventsAsync();
 
+        Task<IEnumerable<Venue>> GetVenuesAsync();
+
         Task<(IEnumerable<Series>, PaginationMetadata)> GetSeriesAsync(
             SeriesResourceParameters seriesResourceParameters);
 
@@ -20,6 +22,9 @@ namespace GDC.EventHost.API.Services
         Task<IEnumerable<Event>> GetEventsForSeriesAsync(Guid seriesId, bool includeDetail);
 
         Task<IEnumerable<Performance>> GetPerformancesForEventAsync(Guid eventId, bool includeDetail);
+
+        Task<(IEnumerable<Venue>, PaginationMetadata)> GetVenuesAsync(
+            VenueResourceParameters venueResourceParameters);
 
 
         // Get Single
@@ -32,6 +37,8 @@ namespace GDC.EventHost.API.Services
 
         Task<Performance?> GetPerformanceForEventAsync(Guid eventId, Guid performanceId, bool includeDetail);
 
+        Task<Venue?> GetVenueAsync(Guid venueId, bool includeDetail);
+
 
         // Add
 
@@ -40,6 +47,8 @@ namespace GDC.EventHost.API.Services
         Task AddEventToSeriesAsync(Guid seriesId, Event theEvent);
 
         Task AddPerformanceToEventAsync(Guid eventId, Performance performance);
+
+        void AddVenue(Venue venue);
 
 
         // Delete
@@ -50,14 +59,18 @@ namespace GDC.EventHost.API.Services
 
         void DeletePerformance(Performance performance);
 
-        
+        void DeleteVenue(Venue venue);
+
+
         // Exists
 
         Task<bool> SeriesExistsAsync(Guid seriesId);
 
         Task<bool> EventExistsAsync(Guid eventId);
 
-        
+        Task<bool> VenueExistsAsync(Guid venueId);
+
+
         // Persist
 
         Task<bool> SaveChangesAsync();

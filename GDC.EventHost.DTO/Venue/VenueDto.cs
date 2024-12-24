@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GDC.EventHost.DTO.Performance;
+using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.DTO.Venue
@@ -11,12 +12,12 @@ namespace GDC.EventHost.DTO.Venue
         public required string Name { get; set; }
 
         [Display(Name = "Description")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         [Display(Name = "Long Description")]
-        public string LongDescription { get; set; } = string.Empty;
+        public string? LongDescription { get; set; }
 
-        [Display(Name = "Status")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
+        [Display(Name = "Status Id")]
+        public required StatusEnum StatusId { get; set; }
     }
 }

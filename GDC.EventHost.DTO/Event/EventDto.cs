@@ -26,6 +26,6 @@ namespace GDC.EventHost.DTO.Event
         public Guid? SeriesId { get; set; }
 
         [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
+        public required StatusEnum StatusId { get; set; }
     }
 }

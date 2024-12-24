@@ -20,7 +20,7 @@ namespace GDC.EventHost.API.Services
         public async Task<IEnumerable<Series>> GetSeriesAsync()
         {
             return await _context.Series
-                .OrderBy(e => e.Title)
+                .OrderBy(s => s.Title)
                 .ToListAsync();
         }
 
@@ -28,6 +28,13 @@ namespace GDC.EventHost.API.Services
         {
             return await _context.Events
                 .OrderBy(e => e.Title)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Venue>> GetVenuesAsync()
+        {
+            return await _context.Venues
+                .OrderBy(v => v.Name)
                 .ToListAsync();
         }
 
@@ -139,6 +146,7 @@ namespace GDC.EventHost.API.Services
                     .Include(p => p.Status)
                     .Include(p => p.PerformanceType)
                     .Include(p => p.Event)
+                    .Include(p => p.Venue)
                     .Where(p => p.EventId == eventId)
                     .ToListAsync();
             }
@@ -146,6 +154,48 @@ namespace GDC.EventHost.API.Services
             return await _context.Performances
                 .Where(p => p.EventId == eventId)
                 .ToListAsync();
+        }
+
+        public async Task<(IEnumerable<Venue>, PaginationMetadata)> GetVenuesAsync(
+            VenueResourceParameters venueResourceParameters)
+        {
+            // collection to start from; build the expression tree
+            var collection = _context.Venues as IQueryable<Venue>;
+
+            if (!string.IsNullOrWhiteSpace(venueResourceParameters.Name))
+            {
+                var name = venueResourceParameters.Name.Trim();
+                collection = collection.Where(v => v.Name == name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(venueResourceParameters.SearchQuery))
+            {
+                var searchQuery = venueResourceParameters.SearchQuery.Trim();
+                collection = collection
+                    .Where(v => v.Name.Contains(searchQuery,
+                        StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            if (venueResourceParameters.IncludeDetail)
+            {
+                collection = collection
+                    .Include(v => v.Status)
+                    .Include(v => v.Performances);
+            }
+
+            var totalItemCount = await collection.CountAsync();
+
+            var paginationMetadata = new PaginationMetadata(
+                totalItemCount, venueResourceParameters.PageSize, venueResourceParameters.PageNumber);
+
+            // execute the query
+            var collectionToReturn = await collection
+                .OrderBy(e => e.Name)
+                .Skip(venueResourceParameters.PageSize * (venueResourceParameters.PageNumber - 1))
+                .Take(venueResourceParameters.PageSize)
+                .ToListAsync();
+
+            return (collectionToReturn, paginationMetadata);
         }
 
 
@@ -216,6 +266,7 @@ namespace GDC.EventHost.API.Services
                     .Include(p => p.PerformanceType)
                     .Include(p => p.Status)
                     .Include(p => p.Event)
+                    .Include(p => p.Venue)
                     .Where(p => p.Id == performanceId && p.EventId == eventId)
                     .FirstOrDefaultAsync();
             }
@@ -225,6 +276,20 @@ namespace GDC.EventHost.API.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<Venue?> GetVenueAsync(Guid venueId, bool includeDetail)
+        {
+            if (includeDetail)
+            {
+                return await _context.Venues
+                    .Include(v => v.Status)
+                    .Include(v => v.Performances)
+                    .Where(v => v.Id == venueId)
+                    .FirstOrDefaultAsync();
+            }
+            return await _context.Venues
+                .Where(v => v.Id == venueId)
+                .FirstOrDefaultAsync();
+        }
 
         // Add
 
@@ -253,6 +318,10 @@ namespace GDC.EventHost.API.Services
             }
         }
 
+        public void AddVenue(Venue venue)
+        {
+            _context.Venues.Add(venue);
+        }
 
         // Delete
 
@@ -271,6 +340,11 @@ namespace GDC.EventHost.API.Services
             _context.Performances.Remove(performance);
         }
 
+        public void DeleteVenue(Venue venue)
+        {
+            _context.Venues.Remove(venue);
+        }
+
 
         // Exists
 
@@ -284,11 +358,20 @@ namespace GDC.EventHost.API.Services
             return await _context.Events.AnyAsync(e => e.Id == eventId);
         }
 
+        public async Task<bool> VenueExistsAsync(Guid venueId)
+        {
+            return await _context.Venues.AnyAsync(s => s.Id == venueId);
+        }
 
         // Persist
 
         public async Task<bool> SaveChangesAsync()
         {
+            // for debugging, watch:
+            // _context.ChangeTracker.Entries(), results
+
+            _context.ChangeTracker.DetectChanges();
+
             return await _context.SaveChangesAsync() >= 0;
         }
    

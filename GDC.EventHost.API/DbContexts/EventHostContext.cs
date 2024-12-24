@@ -1,7 +1,6 @@
 ﻿using GDC.EventHost.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using static GDC.EventHost.DTO.Enums;
 
 namespace GDC.EventHost.API.DbContexts
 {
@@ -12,6 +11,7 @@ namespace GDC.EventHost.API.DbContexts
         public DbSet<Performance> Performances { get; set; }
         public DbSet<PerformanceType> PerformanceTypes { get; set; }
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<Venue> Venues { get; set; }
 
 
         public EventHostContext(DbContextOptions<EventHostContext> options)
@@ -29,6 +29,7 @@ namespace GDC.EventHost.API.DbContexts
             modelBuilder.Entity<Series>().HasOne(e => e.Status).WithMany().OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Event>().HasOne(e => e.Status).WithMany().OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Performance>().HasOne(e => e.Status).WithMany().OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Venue>().HasOne(e => e.Status).WithMany().OnDelete(DeleteBehavior.Restrict);
 
             foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             {
@@ -66,6 +67,28 @@ namespace GDC.EventHost.API.DbContexts
             }
 
             return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            // TODO: Get username from session or other authentication
+            var userName = "session-user";
+
+            foreach (var entity in ChangeTracker.Entries().Where(x => x.State == EntityState.Added))
+            {
+                entity.Property("CreatedDate").CurrentValue = DateTime.Now;
+                entity.Property("CreatedBy").CurrentValue = userName;
+                entity.Property("LastUpdatedDate").CurrentValue = null;
+                entity.Property("LastUpdatedBy").CurrentValue = null;
+            }
+
+            foreach (var entity in ChangeTracker.Entries().Where(x => x.State == EntityState.Modified))
+            {
+                entity.Property("LastUpdatedDate").CurrentValue = DateTime.Now;
+                entity.Property("LastUpdatedBy").CurrentValue = userName;
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

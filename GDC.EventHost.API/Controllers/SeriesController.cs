@@ -37,7 +37,7 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SeriesWithoutEventsDto>>> GetSeries(
+        public async Task<ActionResult<IEnumerable<SeriesDto>>> GetSeries(
             [FromQuery] SeriesResourceParameters seriesResourceParameters)
         {
             var pageSize = seriesResourceParameters.PageSize > maxPageSize
@@ -177,7 +177,7 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteEvent(Guid id)
+        public async Task<ActionResult> DeleteSeries(Guid id)
         {
             var seriesEntity = await _eventHostRepository
                 .GetSeriesAsync(id, false);

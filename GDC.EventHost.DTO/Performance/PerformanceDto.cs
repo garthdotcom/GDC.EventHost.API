@@ -11,7 +11,7 @@ namespace GDC.EventHost.DTO.Performance
         public required DateTime Date { get; set; }
 
         [Display(Name = "Title")]
-        public string Title { get; set; } = string.Empty;
+        public string? Title { get; set; }
 
         [Display(Name = "Performance Type Id")]
         public required Guid PerformanceTypeId { get; set; }
@@ -20,6 +20,9 @@ namespace GDC.EventHost.DTO.Performance
         public required Guid EventId { get; set; }
 
         [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
+        public required StatusEnum StatusId { get; set; }
+
+        [Display(Name = "Venue Id")]
+        public required Guid VenueId { get; set; }
     }
 }

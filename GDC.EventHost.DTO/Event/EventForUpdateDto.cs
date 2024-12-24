@@ -1,4 +1,4 @@
-﻿using GDC.EventHost.DTO.Event.ValidationAttributes;
+﻿using GDC.EventHost.DTO.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
@@ -20,16 +20,21 @@ namespace GDC.EventHost.DTO.Event
         public string? LongDescription { get; set; }
 
         [Display(Name = "Start Date")]
-        [StartDateMustBeFuture]
+        [DateIsFutureOrNull]
         public DateTime? StartDate { get; set; }
 
         [Display(Name = "End Date")]
-        [EndDateMustBeLaterThanStartDate]
+        [DateIsFutureOrNull]
+        [DateRangeIsValid("StartDate")]
         public DateTime? EndDate { get; set; }
 
         [Display(Name = "Series Id")]
         [RegularExpression(@"^[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}$",
             ErrorMessage = "If specified, the Series Id must be a valid Guid.")]
         public Guid? SeriesId { get; set; }
+
+        [Display(Name = "Status Id")]
+        [StatusIsValid]
+        public StatusEnum? StatusId { get; set; }
     }
 }

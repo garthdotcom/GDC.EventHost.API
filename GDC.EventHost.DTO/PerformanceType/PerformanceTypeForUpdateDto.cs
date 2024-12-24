@@ -11,6 +11,6 @@ namespace GDC.EventHost.DTO.PerformanceType
 
         [Display(Name = "Description")]
         [MaxLength(250, ErrorMessage = "The Performance Type Description should not be longer than 250 characters.")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
     }
 }

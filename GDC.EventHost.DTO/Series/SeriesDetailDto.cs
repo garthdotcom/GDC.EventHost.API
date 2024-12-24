@@ -1,5 +1,4 @@
 ﻿using GDC.EventHost.DTO.Event;
-using GDC.EventHost.DTO.SeriesAsset;
 using System.ComponentModel.DataAnnotations;
 using static GDC.EventHost.DTO.Enums;
 
@@ -13,10 +12,10 @@ namespace GDC.EventHost.DTO.Series
         public required string Title { get; set; }
 
         [Display(Name = "Description")]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         [Display(Name = "Long Description")]
-        public string LongDescription { get; set; } = string.Empty;
+        public string? LongDescription { get; set; }
 
         [Display(Name = "Start Date")]
         public DateTime? StartDate { get; set; }
@@ -25,13 +24,13 @@ namespace GDC.EventHost.DTO.Series
         public DateTime? EndDate { get; set; }
 
         [Display(Name = "Status Id")]
-        public StatusEnum StatusId { get; set; } = StatusEnum.Pending;
+        public required StatusEnum StatusId { get; set; }
 
         [Display(Name = "Status Value")]
-        public string StatusValue { get; set; } = string.Empty;
+        public string? StatusValue { get; set; }
 
-        public List<EventDto> Events { get; set; } = [];
+        public List<EventDetailDto> Events { get; set; } = [];
 
-        public List<SeriesAssetDto> SeriesAssets { get; set; } = [];
+        //public List<SeriesAssetDto> SeriesAssets { get; set; } = [];
     }
 }
