@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GDC.EventHost.API.Controllers
 {
-    [Authorize]
     //[Authorize(Policy = "MustBeAdministrator")]
     [Route("api/events/{eventId}/performances")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class PerformancesController : ControllerBase
     {
         private readonly ILogger<PerformancesController> _logger;

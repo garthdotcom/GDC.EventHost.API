@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,6 +9,7 @@ namespace GDC.EventHost.API.Controllers
 {
     [ApiController]
     [Route("api/authentication")]
+    [AllowAnonymous]
     public class AuthenticationController : ControllerBase
     {
         private readonly IConfiguration _configuration;

@@ -9,9 +9,9 @@ using System.Text.Json;
 
 namespace GDC.EventHost.API.Controllers
 {
-    [Authorize]
     [Route("api/series/{seriesId}/events")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class EventsController : ControllerBase
     {
         private readonly ILogger<EventsController> _logger;
