@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDC.EventHost.API", "GDC.EventHost.API\GDC.EventHost.API.csproj", "{956FD11F-9146-4533-987F-354949C53DED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDC.EventHost.Shared", "GDC.EventHost.Shared\GDC.EventHost.Shared.csproj", "{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{956FD11F-9146-4533-987F-354949C53DED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{956FD11F-9146-4533-987F-354949C53DED}.Release|x64.ActiveCfg = Release|x64
 		{956FD11F-9146-4533-987F-354949C53DED}.Release|x64.Build.0 = Release|x64
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Debug|x64.Build.0 = Debug|Any CPU
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Release|x64.ActiveCfg = Release|Any CPU
+		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

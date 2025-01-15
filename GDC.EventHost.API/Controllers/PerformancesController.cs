@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GDC.EventHost.API.Services;
-using GDC.EventHost.DTO.Performance;
+using GDC.EventHost.Shared.Performance;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

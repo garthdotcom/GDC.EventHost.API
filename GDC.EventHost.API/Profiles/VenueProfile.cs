@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GDC.EventHost.DTO.Venue;
+using GDC.EventHost.Shared.Venue;
 
 namespace GDC.EventHost.API.Profiles
 {

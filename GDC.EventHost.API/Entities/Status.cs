@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static GDC.EventHost.DTO.Enums;
+using static GDC.EventHost.Shared.Enums;
 
 namespace GDC.EventHost.API.Entities
 {

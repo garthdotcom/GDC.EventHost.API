@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GDC.EventHost.API.ResourceParameters;
 using GDC.EventHost.API.Services;
-using GDC.EventHost.DTO.Event;
+using GDC.EventHost.Shared.Event;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

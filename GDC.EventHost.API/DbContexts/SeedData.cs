@@ -1,5 +1,5 @@
 ﻿using GDC.EventHost.API.Entities;
-using GDC.EventHost.DTO;
+using GDC.EventHost.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace GDC.EventHost.API.DbContexts

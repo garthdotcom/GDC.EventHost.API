@@ -31,4 +31,8 @@
     <Folder Include="Migrations\" />
     <Folder Include="Models\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GDC.EventHost.Shared\GDC.EventHost.Shared.csproj" />
+  </ItemGroup>
 </Project>

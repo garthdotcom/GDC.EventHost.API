@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GDC.EventHost.DTO.Series;
+using GDC.EventHost.Shared.Series;
 
 namespace GDC.EventHost.API.Profiles
 {
