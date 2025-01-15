@@ -4,11 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDC.EventHost.API", "GDC.EventHost.API\GDC.EventHost.API.csproj", "{956FD11F-9146-4533-987F-354949C53DED}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6} = {6B0E54FC-82C8-40C8-8C85-31D857208EB6}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDC.EventHost.DTO", "..\GDC.EventHost.Common\GDC.EventHost.DTO\GDC.EventHost.DTO.csproj", "{6B0E54FC-82C8-40C8-8C85-31D857208EB6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,14 +21,6 @@ Global
 		{956FD11F-9146-4533-987F-354949C53DED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{956FD11F-9146-4533-987F-354949C53DED}.Release|x64.ActiveCfg = Release|x64
 		{956FD11F-9146-4533-987F-354949C53DED}.Release|x64.Build.0 = Release|x64
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Debug|x64.ActiveCfg = Debug|x64
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Debug|x64.Build.0 = Debug|x64
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Release|x64.ActiveCfg = Release|x64
-		{6B0E54FC-82C8-40C8-8C85-31D857208EB6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
