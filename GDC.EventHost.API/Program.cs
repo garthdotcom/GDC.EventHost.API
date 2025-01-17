@@ -1,17 +1,13 @@
-using GDC.EventHost.API;
+using Azure.Identity;
 using GDC.EventHost.API.DbContexts;
 using GDC.EventHost.API.Services;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using Azure.Identity;
-using static GDC.EventHost.API.DbContexts.EventHostContext;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -108,6 +104,9 @@ if (builder.Environment.IsProduction())
 // lock down all endpoints by default
 builder.Services.AddControllers(c => c.Filters.Add(new AuthorizeFilter()));
 
+// //turn off the automatic claims mapping
+// JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -115,28 +114,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.ValidateAudience = false;
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
 
-        //options.TokenValidationParameters = new()
+        //options.TokenValidationParameters = new TokenValidationParameters
         //{
-        //    ValidateAudience = false,       // turn off to adhere to OAuth2 standards
-        //    ValidTypes = new[] { "at+jwt" } // access token in json web token format
-        //    //ValidateIssuer = true,
-        //    //ValidateAudience = true,
-        //    //ValidateIssuerSigningKey = true,
-        //    //ValidIssuer = builder.Configuration["Authentication:Issuer"],
-        //    //ValidAudience = builder.Configuration["Authentication:Audience"],
-        //    //IssuerSigningKey = new SymmetricSecurityKey(
-        //    //    Convert.FromBase64String(builder.Configuration["Authentication:SecretForKey"]))
+        //    RoleClaimType = JwtClaimTypes.Role,
+        //    NameClaimType = JwtClaimTypes.Name
         //};
     });
 
-//builder.Services.AddAuthorization(options =>
-//{
-//    options.AddPolicy("MustBeAdministrator", policy =>
-//    {
-//        policy.RequireAuthenticatedUser();
-//        policy.RequireClaim("admin", "True");
-//    });
-//});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("isadmin", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(JwtClaimTypes.Role, "admin");
+    });
+});
 
 var app = builder.Build();
 

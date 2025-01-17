@@ -2,7 +2,6 @@
 using GDC.EventHost.API.ResourceParameters;
 using GDC.EventHost.API.Services;
 using GDC.EventHost.Shared.Series;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -37,9 +36,13 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<SeriesDto>>> GetSeries(
             [FromQuery] SeriesResourceParameters seriesResourceParameters)
         {
+            // debugging
+            var claims = User.Claims;
+
             var pageSize = seriesResourceParameters.PageSize > maxPageSize
                 ? maxPageSize 
                 : seriesResourceParameters.PageSize;
@@ -59,6 +62,7 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpGet("{id}", Name = "GetSeries")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetSeries(Guid id, bool includeDetail = false)
         {
             var entity = await _eventHostRepository.GetSeriesAsync(id, includeDetail);
@@ -78,6 +82,7 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<SeriesDto>> CreateSeries(
             [FromBody] SeriesForUpdateDto seriesForUpdateDto)
         {
@@ -103,6 +108,8 @@ namespace GDC.EventHost.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> UpdateSeries(
             Guid id,
             SeriesForUpdateDto seriesForUpdateDto)
@@ -131,6 +138,8 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpPatch("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> PartiallyUpdateSeries(
             Guid id,
             JsonPatchDocument<SeriesForUpdateDto> patchDocument)
@@ -177,6 +186,8 @@ namespace GDC.EventHost.API.Controllers
 
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteSeries(Guid id)
         {
             var seriesEntity = await _eventHostRepository
