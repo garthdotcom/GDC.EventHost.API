@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDC.EventHost.API", "GDC.Ev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDC.EventHost.Shared", "GDC.EventHost.Shared\GDC.EventHost.Shared.csproj", "{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GDC.EventHost.DAL", "GDC.EventHost.DAL\GDC.EventHost.DAL.csproj", "{A096CAB8-33DA-4BD9-A839-89FE5511971E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Release|x64.ActiveCfg = Release|Any CPU
 		{CD1FEDA7-1970-4094-A4F3-B5EEFA1071FA}.Release|x64.Build.0 = Release|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Debug|x64.Build.0 = Debug|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Release|x64.ActiveCfg = Release|Any CPU
+		{A096CAB8-33DA-4BD9-A839-89FE5511971E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

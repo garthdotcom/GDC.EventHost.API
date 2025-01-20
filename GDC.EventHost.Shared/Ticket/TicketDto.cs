@@ -12,7 +12,7 @@ namespace GDC.EventHost.Shared.Ticket
 
         public TicketStatusEnum TicketStatusId { get; set; } = TicketStatusEnum.UnSold;
 
-        public Guid EventId { get; set; }
+        public Guid PerformanceId { get; set; }
 
         public Guid SeatId { get; set; }
     }

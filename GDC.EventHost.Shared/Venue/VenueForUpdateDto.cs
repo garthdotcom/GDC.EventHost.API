@@ -9,7 +9,7 @@ namespace GDC.EventHost.Shared.Venue
         [Display(Name = "Name")]
         [Required(ErrorMessage = "You should enter a name.")]
         [MaxLength(150, ErrorMessage = "The name should not be longer than 150 characters.")]
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
         [Display(Name = "Description")]
         [MaxLength(250, ErrorMessage = "The description should not be longer than 250 characters.")]
@@ -22,6 +22,6 @@ namespace GDC.EventHost.Shared.Venue
         [Display(Name = "Status Id")]
         [Required(ErrorMessage = "You should enter a Status Id.")]
         [StatusIsValid]
-        public required StatusEnum StatusId { get; set; }
+        public StatusEnum StatusId { get; set; }
     }
 }

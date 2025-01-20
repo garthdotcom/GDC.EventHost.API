@@ -1,11 +1,14 @@
 using Azure.Identity;
-using GDC.EventHost.API.DbContexts;
+using GDC.EventHost.DAL.DbContexts;
+using GDC.EventHost.DAL.Entities;
 using GDC.EventHost.API.Services;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -88,9 +91,16 @@ builder.Services.AddDbContext<EventHostContext>(dbContextOptions
             builder.Configuration["ConnectionStrings:EventHostDBConnectionString"]);
         dbContextOptions.ConfigureWarnings(warnings => 
             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
-});
+    });
 
 builder.Services.AddScoped<IEventHostRepository, EventHostRepository>();
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+});
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

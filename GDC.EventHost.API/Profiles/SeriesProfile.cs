@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GDC.EventHost.DAL.Entities;
 using GDC.EventHost.Shared.Series;
 
 namespace GDC.EventHost.API.Profiles
@@ -7,17 +8,17 @@ namespace GDC.EventHost.API.Profiles
     {
         public SeriesProfile()
         {
-            CreateMap<Entities.Series, SeriesDetailDto>()
+            CreateMap<Series, SeriesDetailDto>()
                 .ForMember(
                     dest => dest.StatusValue,
                     opt => opt.MapFrom(src => src.StatusId));
-            CreateMap<SeriesDetailDto, Entities.Series>();
+            CreateMap<SeriesDetailDto, Series>();
 
-            CreateMap<Entities.Series, SeriesDto>();
-            CreateMap<SeriesDto, Entities.Series>();
+            CreateMap<Series, SeriesDto>();
+            CreateMap<SeriesDto, Series>();
 
-            CreateMap<SeriesForUpdateDto, Entities.Series>();
-            CreateMap<Entities.Series, SeriesForUpdateDto>();
+            CreateMap<SeriesForUpdateDto, Series>();
+            CreateMap<Series, SeriesForUpdateDto>();
         }
     }
 }

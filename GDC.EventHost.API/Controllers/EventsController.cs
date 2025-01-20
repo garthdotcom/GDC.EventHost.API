@@ -1,237 +1,341 @@
 ﻿using AutoMapper;
+using GDC.EventHost.DAL.Entities;
 using GDC.EventHost.API.ResourceParameters;
 using GDC.EventHost.API.Services;
 using GDC.EventHost.Shared.Event;
-using Microsoft.AspNetCore.Authorization;
+using GDC.EventHost.Shared.EventAsset;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
-namespace GDC.EventHost.API.Controllers
+namespace GHC.EventHost.API.Controllers
 {
-    [Route("api/series/{seriesId}/events")]
+    [Produces("application/json", "application/xml")]
+    [Route("api/v{version:apiVersion}/events")]
     [ApiController]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public class EventsController : ControllerBase
+    public class EventsController : Controller
     {
-        private readonly ILogger<EventsController> _logger;
-        private readonly IMailService _mailService;
         private readonly IEventHostRepository _eventHostRepository;
         private readonly IMapper _mapper;
-        const int maxPageSize = 20;
 
-        public EventsController(ILogger<EventsController> logger,
-            IMailService mailService,
-            IEventHostRepository eventHostRepository,
-            IMapper mapper)
+        public EventsController(IEventHostRepository eventHostRepository, IMapper mapper)
         {
-            _logger = logger ??
-                throw new ArgumentNullException(nameof(logger));
-            _mailService = mailService ??
-                throw new ArgumentNullException(nameof(mailService));
             _eventHostRepository = eventHostRepository ??
                 throw new ArgumentNullException(nameof(eventHostRepository));
+
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
-        }
 
-        
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventDto>>> GetEvents(
-            [FromQuery] EventResourceParameters eventResourceParameters)
-        {
-            if (eventResourceParameters.PageSize > maxPageSize)
-            {
-                eventResourceParameters.PageSize = maxPageSize;
-            }
-
-            var (eventEntities, paginationMetadata) = await _eventHostRepository
-                .GetEventsAsync(eventResourceParameters);
-
-            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-
-            if (eventResourceParameters.IncludeDetail)
-            {
-                return Ok(_mapper.Map<IEnumerable<EventDetailDto>>(eventEntities));
-            }
-
-            return Ok(_mapper.Map<IEnumerable<EventDto>>(eventEntities));
+            _eventHostRepository = eventHostRepository;
         }
 
 
-        [HttpGet("{eventId}", Name = "GetEvent")]
-        public async Task<ActionResult> GetEvent(Guid eventId, bool includeDetail)
+        [HttpGet(Name = "GetEvents")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<EventDetailDto>>> GetEvents(
+            [FromQuery] EventResourceParameters resourceParms,
+            ApiVersion version)
         {
-            var entity = await _eventHostRepository.GetEventAsync(eventId, includeDetail);
+            var evtFromRepo = await _eventHostRepository.GetEventsAsync(resourceParms);
 
-            if (entity == null)
+            var evtDtos = _mapper.Map<IEnumerable<EventDetailDto>>(evtFromRepo);
+
+            foreach (var evtDto in evtDtos)
+            {
+                foreach (var performanceDetailDto in evtDto.Performances)
+                {
+                    performanceDetailDto.TicketCount = _eventHostRepository
+                        .GetPerformanceTicketCount(performanceDetailDto.Id);
+                }
+            }
+
+            return Ok(evtDtos);
+        }
+
+
+        [HttpGet("{evtId}", Name = "GetEventById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<EventDetailDto>> GetEventById(Guid evtId,
+            ApiVersion version)
+        {
+            if (evtId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId);
+
+            if (evtFromRepo == null)
             {
                 return NotFound();
             }
 
-            if (includeDetail)
+            var evtDto = _mapper.Map<EventDetailDto>(evtFromRepo);
+
+            foreach (var performanceDetailDto in evtDto.Performances)
             {
-                return Ok(_mapper.Map<EventDetailDto>(entity));
+                performanceDetailDto.TicketCount = _eventHostRepository
+                    .GetPerformanceTicketCount(performanceDetailDto.Id);
             }
 
-            return Ok(_mapper.Map<EventDto>(entity));
+            return Ok(evtDto);
         }
 
 
-        [HttpPost]
-        public async Task<ActionResult<EventDto>> CreateEvent(
-            Guid seriesId,
-            [FromBody] EventForUpdateDto eventForUpdateDto)
+        [HttpPost(Name = "CreateEvent")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<EventDetailDto>> CreateEvent(EventForUpdateDto evtDto,
+            ApiVersion version)
         {
-            if (!await _eventHostRepository.SeriesExistsAsync(seriesId))
+            if (evtDto == null)
             {
-                _logger.LogInformation("Series with id {SeriesId} was not found when trying to create a event.",
-                    seriesId);
-                return NotFound();
+                return BadRequest();
             }
 
-            var newEventEntity = _mapper.Map<Entities.Event>(eventForUpdateDto);
+            var evtToReturn = await InsertEventAsync(evtDto);
 
-            await _eventHostRepository.AddEventToSeriesAsync(seriesId, newEventEntity);
+            return CreatedAtRoute("GetEventById",
+                new
+                {
+                    evtId = evtToReturn.Id,
+                    version = $"{version}"
+                },
+                evtToReturn);
+        }
 
-            if (await _eventHostRepository.SaveChangesAsync())
+
+        [HttpPut("{evtId}", Name = "UpdateEvent")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> UpdateEvent(Guid evtId, EventForUpdateDto evtDto,
+            ApiVersion version)
+        {
+            if (evtId == Guid.Empty || evtDto == null)
             {
-                var eventToReturnDto = _mapper.Map<EventDto>(newEventEntity);
+                return BadRequest();
+            }
 
-                return CreatedAtRoute("GetEvent",
+            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId);
+
+            if (evtFromRepo == null)
+            {
+                var evtToReturn = await InsertEventAsync(evtDto);
+
+                return CreatedAtRoute("GetEventById",
                     new
                     {
-                        seriesId = eventToReturnDto.SeriesId,
-                        eventId = eventToReturnDto.Id,
-                        includePerformances = false
+                        evtId = evtToReturn.Id,
+                        version = $"{version}"
                     },
-                    eventToReturnDto);
+                    evtToReturn);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to create a new event for series id {seriesId}.");
+            _mapper.Map(evtDto, evtFromRepo);
+            //await _eventHostRepository.UpdateEventAsync(evtFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
+
+            return NoContent();
         }
 
 
-        [HttpPut("{eventId}")]
-        public async Task<ActionResult> UpdateEvent(
-            Guid seriesId,
-            Guid eventId,
-            EventForUpdateDto eventForUpdateDto)
+        [HttpPatch("{evtId}", Name = "PartiallyUpdateEvent")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> PartiallyUpdateEvent(Guid evtId,
+            JsonPatchDocument<EventForUpdateDto> patchDocument,
+            ApiVersion version)
         {
-            if (!await _eventHostRepository.SeriesExistsAsync(seriesId))
+            if (evtId == Guid.Empty)
             {
-                _logger.LogInformation("Series with id {SeriesId} was not found when trying to update a event.",
-                    seriesId);
-                return NotFound();
+                return BadRequest();
+            }
+            var eventExists = await _eventHostRepository.EventExistsAsync(evtId);
+
+            if (!eventExists)
+            {
+                var evtDto = new EventForUpdateDto();
+
+                patchDocument.ApplyTo(evtDto, ModelState);
+
+                if (!TryValidateModel(evtDto))
+                {
+                    return ValidationProblem(ModelState);
+                }
+
+                var evtToReturn = await InsertEventAsync(evtDto);
+
+                return CreatedAtRoute("GetEventById",
+                    new
+                    {
+                        evtId = evtToReturn.Id,
+                        version = $"{version}"
+                    },
+                    evtToReturn);
             }
 
-            var eventEntity = await _eventHostRepository
-                .GetEventForSeriesAsync(seriesId, eventId, false);
+            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId, false);
 
-            if (eventEntity == null)
+            var evtToPatch = _mapper.Map<EventForUpdateDto>(evtFromRepo);
+
+            patchDocument.ApplyTo(evtToPatch, ModelState);
+
+            if (!TryValidateModel(evtToPatch))
             {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to update the event.", eventId);
-                return NotFound();
+                return ValidationProblem(ModelState);
             }
 
-            // overwrite the entity with the corresponding values in the dto
-            _mapper.Map(eventForUpdateDto, eventEntity);
+            _mapper.Map(evtToPatch, evtFromRepo);
+            //await _eventHostRepository.UpdateEventAsync(evtFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
 
-            if (await _eventHostRepository.SaveChangesAsync())
-            {
-                return NoContent();
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to update the event with id {eventId} for series id {seriesId}.");
+            return NoContent();
         }
 
 
-        [HttpPatch("{eventId}")]
-        public async Task<ActionResult> PartiallyUpdateEvent(
-            Guid seriesId,
-            Guid eventId,
-            JsonPatchDocument<EventForUpdateDto> patchDocument)
+        [HttpDelete("{evtId}", Name = "DeleteEvent")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> DeleteEvent(Guid evtId,
+            ApiVersion version)
         {
-            if (!await _eventHostRepository.SeriesExistsAsync(seriesId))
+            if (evtId == Guid.Empty)
             {
-                _logger.LogInformation("Series with id {SeriesId} was not found when trying to partially update a event.",
-                    seriesId);
+                return BadRequest();
+            }
+
+            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId, false);
+
+            if (evtFromRepo == null)
+            {
                 return NotFound();
             }
 
-            var eventEntity = await _eventHostRepository
-                .GetEventForSeriesAsync(seriesId, eventId, false);
+            _eventHostRepository.SoftDeleteEvent(evtFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
 
-            if (eventEntity == null)
-            {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to partially update the event.", eventId);
-                return NotFound();
-            }
-
-            var eventToPatchDto = _mapper.Map<EventForUpdateDto>(eventEntity);
-
-            patchDocument.ApplyTo(eventToPatchDto, ModelState);
-
-            // check for any errors in the patch document
-            if (!ModelState.IsValid)
-            {
-                _logger.LogInformation("An issue was found in the patch document when trying to patch id {EventId}.", eventId);
-                return BadRequest(ModelState);
-            }
-
-            // check for broken validation rules on the model
-            if (!TryValidateModel(eventToPatchDto))
-            {
-                _logger.LogInformation("Validation issue(s) was/were found when trying to patch id {EventId}.", eventId);
-                return BadRequest(ModelState);
-            }
-
-            // overwrite the entity with the corresponding dto values
-            _mapper.Map(eventToPatchDto, eventEntity);
-
-            if (await _eventHostRepository.SaveChangesAsync())
-            {
-                return NoContent();
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to partially update the event with id {eventId} for series id {seriesId}.");
-
+            return NoContent();
         }
 
 
-        [HttpDelete("{eventId}")]
-        public async Task<ActionResult> DeleteEvent(Guid seriesId, Guid eventId)
+        //*************************************************************************************
+        // Event Assets
+        //*************************************************************************************
+
+        // the resource parms allow us to filter by asset type
+
+        [HttpGet("{evtId}/assets", Name = "GetAssetsForEvent")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<EventAssetDto>>> GetAssetsForEvent(Guid evtId,
+            [FromQuery] AssetResourceParameters resourceParms,
+            ApiVersion version)
         {
-            if (!await _eventHostRepository.SeriesExistsAsync(seriesId))
+            if (evtId == Guid.Empty)
             {
-                _logger.LogInformation("Series with id {SeriesId} was not found when trying to delete a event with id {EventId}.",
-                    seriesId, eventId);
-                return NotFound();
+                return BadRequest();
             }
 
-            var eventEntity = await _eventHostRepository
-                .GetEventForSeriesAsync(seriesId, eventId, false);
+            var evtAssetsFromRepo = await _eventHostRepository.GetEventAssetsAsync(evtId, resourceParms);
 
-            if (eventEntity == null)
-            {
-                _logger.LogInformation("Event with id {EventId} was not found when trying to partially update the event.", eventId);
-                return NotFound();
-            }
-
-            _eventHostRepository.DeleteEvent(eventEntity);
-
-            if (await _eventHostRepository.SaveChangesAsync())
-            {
-                _mailService.Send($"Event Deleted: {eventEntity.Title}",
-                $"A event called '{eventEntity.Title}' for series id '{seriesId}' was deleted.");
-                return NoContent();
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to delete the event '{eventEntity.Title}' with id {eventId} for series id {seriesId}.");
+            return Ok(_mapper.Map<IEnumerable<EventAssetDto>>(evtAssetsFromRepo));
         }
+
+
+        [HttpPost("{evtId}/assets", Name = "AddAssetToEvent")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<EventAssetDto>> AddAssetToEvent(Guid evtId,
+            EventAssetForUpdateDto assetForUpdateDto,
+            ApiVersion version)
+        {
+            if (evtId == Guid.Empty || assetForUpdateDto == null)
+            {
+                return BadRequest();
+            }
+
+            var eventAssetExists = await _eventHostRepository
+                .EventAssetExistsAsync(evtId, assetForUpdateDto.AssetTypeId);
+
+            if (eventAssetExists)
+            {
+                ModelState.AddModelError(nameof(EventAssetForUpdateDto),
+                    $"An asset of type '{assetForUpdateDto.AssetTypeId}' currently exists for this event.");
+                return new UnprocessableEntityObjectResult(ModelState);
+            }
+
+            var evtAsset = _mapper.Map<EventAsset>(assetForUpdateDto);
+
+            evtAsset.EventId = evtId;
+
+            await _eventHostRepository.AddEventAssetAsync(evtAsset);
+
+            await _eventHostRepository.SaveChangesAsync();
+
+            var newEventAssetDto = _mapper.Map<EventAssetDto>(evtAsset);
+
+            return CreatedAtRoute("GetEventAssetById",
+                new
+                {
+                    evtAssetId = newEventAssetDto.Id,
+                    version = $"{version}"
+                },
+                newEventAssetDto);
+        }
+
+
+        //*************************************************************************************
+
+
+        [HttpHead(Name = "GetEventMetadata")]
+        public ActionResult GetEventMetadata(ApiVersion version)
+        {
+            return Ok();
+        }
+
+
+        [HttpOptions(Name = "GetEventOptions")]
+        public ActionResult GetEventOptions(ApiVersion version)
+        {
+            Response.Headers.Add("Allow", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+            return Ok();
+        }
+
+
+        public override ActionResult ValidationProblem(
+            [ActionResultObjectValue] ModelStateDictionary modelStateDictionary)
+        {
+            var options = HttpContext.RequestServices
+                .GetRequiredService<IOptions<ApiBehaviorOptions>>();
+            return (ActionResult)options.Value
+                .InvalidModelStateResponseFactory(ControllerContext);
+        }
+
+
+        #region Private Methods
+
+        private async Task<EventDetailDto> InsertEventAsync(EventForUpdateDto evtDto)
+        {
+            var evt = _mapper.Map<Event>(evtDto);
+            await _eventHostRepository.AddEventAsync(evt);
+            await _eventHostRepository.SaveChangesAsync();
+            return _mapper.Map<EventDetailDto>(evt);
+        }
+
+        #endregion
     }
 }

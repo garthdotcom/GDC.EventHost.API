@@ -9,7 +9,7 @@ namespace GDC.EventHost.Shared.Event
         [Display(Name = "Title")]
         [Required(ErrorMessage = "You should enter a title.")]
         [MaxLength(150, ErrorMessage = "The title should not be longer than 150 characters.")]
-        public required string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [Display(Name = "Description")]
         [MaxLength(250, ErrorMessage = "The description should not be longer than 250 characters.")]

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GDC.EventHost.DAL.Entities;
 using GDC.EventHost.Shared.Venue;
 
 namespace GDC.EventHost.API.Profiles
@@ -7,17 +8,17 @@ namespace GDC.EventHost.API.Profiles
     {
         public VenueProfile()
         {
-            CreateMap<Entities.Venue, VenueDetailDto>()
+            CreateMap<Venue, VenueDetailDto>()
                 .ForMember(
                     dest => dest.StatusValue,
                     opt => opt.MapFrom(src => src.StatusId));
-            CreateMap<VenueDetailDto, Entities.Venue>();
+            CreateMap<VenueDetailDto, Venue>();
 
-            CreateMap<Entities.Venue, VenueDto>();
-            CreateMap<VenueDto, Entities.Venue>();
+            CreateMap<Venue, VenueDto>();
+            CreateMap<VenueDto, Venue>();
 
-            CreateMap<VenueForUpdateDto, Entities.Venue>();
-            CreateMap<Entities.Venue, VenueForUpdateDto>();
+            CreateMap<VenueForUpdateDto, Venue>();
+            CreateMap<Venue, VenueForUpdateDto>();
         }
     }
 }

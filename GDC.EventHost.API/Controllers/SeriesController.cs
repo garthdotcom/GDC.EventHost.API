@@ -1,216 +1,342 @@
 ﻿using AutoMapper;
+using GDC.EventHost.DAL.Entities;
 using GDC.EventHost.API.ResourceParameters;
 using GDC.EventHost.API.Services;
+using GDC.EventHost.Shared.Asset;
 using GDC.EventHost.Shared.Series;
+using GDC.EventHost.Shared.SeriesAsset;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
-namespace GDC.EventHost.API.Controllers
+namespace GHC.EventHost.API.Controllers
 {
-    [Route("api/series")]
+    [Produces("application/json", "application/xml")]
+    [Route("api/v{version:apiVersion}/series")]
     [ApiController]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public class SeriesController : ControllerBase
     {
-        private readonly ILogger<SeriesController> _logger;
-        private readonly IMailService _mailService;
         private readonly IEventHostRepository _eventHostRepository;
         private readonly IMapper _mapper;
-        const int maxPageSize = 20;
 
-        public SeriesController(ILogger<SeriesController> logger,
-            IMailService mailService,
-            IEventHostRepository eventHostRepository,
-            IMapper mapper)
+        public SeriesController(IEventHostRepository eventHostRepository, IMapper mapper)
         {
-            _logger = logger ??
-                throw new ArgumentNullException(nameof(logger));
-            _mailService = mailService ??
-                throw new ArgumentNullException(nameof(mailService));
             _eventHostRepository = eventHostRepository ??
                 throw new ArgumentNullException(nameof(eventHostRepository));
+
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
+
+            _eventHostRepository = eventHostRepository;
         }
 
 
-        [HttpGet]
+        [HttpGet(Name = "GetSeries")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<SeriesDto>>> GetSeries(
-            [FromQuery] SeriesResourceParameters seriesResourceParameters)
+        public async Task<ActionResult<IEnumerable<SeriesDetailDto>>> GetSeries(
+            [FromQuery] SeriesResourceParameters seriesResourceParameters,
+            ApiVersion version)
         {
-            // debugging
-            var claims = User.Claims;
+            var seriesFromRepo = await _eventHostRepository.GetSeriesAsync(seriesResourceParameters);
 
-            var pageSize = seriesResourceParameters.PageSize > maxPageSize
-                ? maxPageSize 
-                : seriesResourceParameters.PageSize;
+            return Ok(_mapper.Map<IEnumerable<SeriesDetailDto>>(seriesFromRepo));
+        }
 
-            var (seriesEntities, paginationMetadata) = await _eventHostRepository
-                .GetSeriesAsync(seriesResourceParameters);
 
-            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-
-            if (seriesResourceParameters.IncludeDetail)
+        [HttpGet("{seriesId}", Name = "GetSeriesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<SeriesDetailDto>> GetSeriesById(Guid seriesId,
+            ApiVersion version)
+        {
+            if (seriesId == Guid.Empty)
             {
-                return Ok(_mapper.Map<IEnumerable<SeriesDetailDto>>(seriesEntities));
+                return BadRequest();
             }
 
-            return Ok(_mapper.Map<IEnumerable<SeriesDto>>(seriesEntities));
-        }
+            var seriesFromRepo = await _eventHostRepository.GetSeriesByIdAsync(seriesId);
 
-
-        [HttpGet("{id}", Name = "GetSeries")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetSeries(Guid id, bool includeDetail = false)
-        {
-            var entity = await _eventHostRepository.GetSeriesAsync(id, includeDetail);
-
-            if (entity == null)
+            if (seriesFromRepo == null)
             {
                 return NotFound();
             }
 
-            if (includeDetail)
-            {
-                return Ok(_mapper.Map<SeriesDetailDto>(entity));
-            }
-
-            return Ok(_mapper.Map<SeriesDto>(entity));
+            return Ok(_mapper.Map<SeriesDetailDto>(seriesFromRepo));
         }
 
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<SeriesDto>> CreateSeries(
-            [FromBody] SeriesForUpdateDto seriesForUpdateDto)
+        [HttpGet("list", Name = "GetSeriesForList")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<SeriesDto>>> GetSeriesForList(ApiVersion version)
         {
-            var newSeriesEntity = _mapper.Map<Entities.Series>(seriesForUpdateDto);
+            var eventTypeFromRepo = await _eventHostRepository.GetSeriesAsync();
 
-            _eventHostRepository.AddSeries(newSeriesEntity);
+            return Ok(_mapper.Map<IEnumerable<SeriesDto>>(eventTypeFromRepo));
+        }
 
-            if (await _eventHostRepository.SaveChangesAsync())
+
+        [HttpPost(Name = "CreateSeries")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<SeriesDetailDto>> CreateSeries(SeriesForUpdateDto seriesDto,
+            ApiVersion version)
+        {
+            if (seriesDto == null)
             {
-                var seriesToReturnDto = _mapper.Map<SeriesDto>(newSeriesEntity);
+                return BadRequest();
+            }
 
-                return CreatedAtRoute("GetSeries",
+            var seriesToReturn = await InsertSeriesAsync(seriesDto);
+
+            return CreatedAtRoute("GetSeriesById",
+                new
+                {
+                    seriesId = seriesToReturn.Id,
+                    version = $"{version}"
+                },
+                seriesToReturn);
+        }
+
+
+        [HttpPut("{seriesId}", Name = "UpdateSeriesAsync")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> UpdateSeriesAsync(Guid seriesId, SeriesForUpdateDto seriesDto,
+            ApiVersion version)
+        {
+            if (seriesId == Guid.Empty || seriesDto == null)
+            {
+                return BadRequest();
+            }
+
+            var seriesFromRepo = await _eventHostRepository.GetSeriesByIdAsync(seriesId, false);
+
+            if (seriesFromRepo == null)
+            {
+                var seriesToReturn = await InsertSeriesAsync(seriesDto);
+
+                return CreatedAtRoute("GetSeriesById",
                     new
                     {
-                        id = seriesToReturnDto.Id,
-                        includeEvents = false
+                        seriesId = seriesToReturn.Id,
+                        version = $"{version}"
                     },
-                    seriesToReturnDto);
+                    seriesToReturn);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to create a new series.");
+            _mapper.Map(seriesDto, seriesFromRepo);
+            //_eventHostRepository.UpdateSeriesAsync(seriesFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
+            return NoContent();
         }
 
-        [HttpPut("{id}")]
+
+        [HttpPatch("{seriesId}", Name = "PartiallyUpdateSeriesAsync")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> PartiallyUpdateSeriesAsync(Guid seriesId,
+            JsonPatchDocument<SeriesForUpdateDto> patchDocument,
+            ApiVersion version)
+        {
+            if (seriesId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+            var seriesExists = await _eventHostRepository.SeriesExistsAsync(seriesId);
+
+            if (!seriesExists)
+            {
+                var seriesDto = new SeriesForUpdateDto();
+
+                patchDocument.ApplyTo(seriesDto, ModelState);
+
+                if (!TryValidateModel(seriesDto))
+                {
+                    return ValidationProblem(ModelState);
+                }
+
+                var seriesToReturn = await InsertSeriesAsync(seriesDto);
+
+                return CreatedAtRoute("GetSeriesById",
+                    new
+                    {
+                        seriesId = seriesToReturn.Id,
+                        version = $"{version}"
+                    },
+                    seriesToReturn);
+            }
+
+            var seriesFromRepo = await _eventHostRepository.GetSeriesByIdAsync(seriesId, false);
+
+            var seriesToPatch = _mapper.Map<SeriesForUpdateDto>(seriesFromRepo);
+
+            patchDocument.ApplyTo(seriesToPatch, ModelState);
+
+            if (!TryValidateModel(seriesToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(seriesToPatch, seriesFromRepo);
+            //_eventHostRepository.UpdateSeriesAsync(seriesFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpDelete("{seriesId}", Name = "DeleteSeries")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> UpdateSeries(
-            Guid id,
-            SeriesForUpdateDto seriesForUpdateDto)
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> DeleteSeries(Guid seriesId,
+            ApiVersion version)
         {
-            var seriesEntity = await _eventHostRepository
-                .GetSeriesAsync(id, false);
-
-            if (seriesEntity == null)
+            if (seriesId == Guid.Empty)
             {
-                _logger.LogInformation("Series with id {SeriesId} was not found when trying to update it.",
-                    id);
+                return BadRequest();
+            }
+
+            var seriesFromRepo = await _eventHostRepository.GetSeriesByIdAsync(seriesId, false);
+
+            if (seriesFromRepo == null)
+            {
                 return NotFound();
             }
 
-            // overwrite the entity with the corresponding values in the dto
-            _mapper.Map(seriesForUpdateDto, seriesEntity);
+            _eventHostRepository.SoftDeleteSeries(seriesFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
 
-            if (await _eventHostRepository.SaveChangesAsync())
-            {
-                return NoContent();
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to update the series with id {id}.");
+            return NoContent();
         }
 
 
-        [HttpPatch("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> PartiallyUpdateSeries(
-            Guid id,
-            JsonPatchDocument<SeriesForUpdateDto> patchDocument)
+        //*************************************************************************************
+        // Series Assets
+        //*************************************************************************************
+
+        // the resource parms allow us to filter by asset type
+
+        [HttpGet("{seriesId}/assets", Name = "GetAssetsForSeries")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<SeriesAssetDto>>> GetAssetsForSeries(Guid seriesId,
+            [FromQuery] AssetResourceParameters resourceParms,
+            ApiVersion version)
         {
-            var seriesEntity = await _eventHostRepository
-                .GetSeriesAsync(id, false);
-
-            if (seriesEntity == null)
+            if (seriesId == Guid.Empty)
             {
-                _logger.LogInformation("Series with id {SeriesId} was not found when trying to partially update it.", id);
-                return NotFound();
+                return BadRequest();
             }
 
-            var seriesToPatchDto = _mapper.Map<SeriesForUpdateDto>(seriesEntity);
+            var seriesAssetsFromRepo = await _eventHostRepository
+                .GetSeriesAssetsAsync(seriesId, resourceParms);
 
-            patchDocument.ApplyTo(seriesToPatchDto, ModelState);
-
-            // check for any errors in the patch document
-            if (!ModelState.IsValid)
-            {
-                _logger.LogInformation("An issue was found in the patch document when trying to patch id {SeriesId}.", id);
-                return BadRequest(ModelState);
-            }
-
-            // check for broken validation rules on the model
-            if (!TryValidateModel(seriesToPatchDto))
-            {
-                _logger.LogInformation("Validation issue(s) was/were found when trying to patch id {SeriesId}.", id);
-                return BadRequest(ModelState);
-            }
-
-            // overwrite the entity with the corresponding dto values
-            _mapper.Map(seriesToPatchDto, seriesEntity);
-
-            if (await _eventHostRepository.SaveChangesAsync())
-            {
-                return NoContent();
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to partially update the series with id {id}.");
-
+            return Ok(_mapper.Map<IEnumerable<SeriesAssetDto>>(seriesAssetsFromRepo));
         }
 
 
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> DeleteSeries(Guid id)
+        [HttpPost("{seriesId}/assets", Name = "AddAssetToSeries")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<SeriesAssetDto>> AddAssetToSeries(Guid seriesId,
+            SeriesAssetForUpdateDto assetForUpdateDto,
+            ApiVersion version)
         {
-            var seriesEntity = await _eventHostRepository
-                .GetSeriesAsync(id, false);
-
-            if (seriesEntity == null)
+            if (seriesId == Guid.Empty || assetForUpdateDto == null)
             {
-                _logger.LogInformation("Series with id {SeriesId} was not found when trying to partially update it.", id);
-                return NotFound();
+                return BadRequest();
             }
 
-            _eventHostRepository.DeleteSeries(seriesEntity);
+            var seriesAssetOfTypeExists = await _eventHostRepository
+                .SeriesAssetExistsAsync(seriesId, assetForUpdateDto.AssetTypeId);
 
-            if (await _eventHostRepository.SaveChangesAsync())
+            if (seriesAssetOfTypeExists)
             {
-                _mailService.Send($"Series Deleted: {seriesEntity.Title}",
-                $"A series called '{seriesEntity.Title}' with id '{id}' was deleted.");
-                return NoContent();
+                ModelState.AddModelError(nameof(SeriesAssetForUpdateDto),
+                    $"An asset of type '{assetForUpdateDto.AssetTypeId}' currently exists for this series.");
+                return new UnprocessableEntityObjectResult(ModelState);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to delete the series '{seriesEntity.Title}' with id {id}.");
+            var seriesAsset = _mapper.Map<SeriesAsset>(assetForUpdateDto);
+
+            seriesAsset.SeriesId = seriesId;
+
+            await _eventHostRepository.AddSeriesAssetAsync(seriesAsset);
+
+            await _eventHostRepository.SaveChangesAsync();
+
+            var newSeriesAssetDto = _mapper.Map<SeriesAssetDto>(seriesAsset);
+
+            return CreatedAtRoute("GetSeriesAssetById",
+                new
+                {
+                    seriesAssetId = newSeriesAssetDto.Id,
+                    version = $"{version}"
+                },
+                newSeriesAssetDto);
         }
 
+
+        //*************************************************************************************
+
+
+        [HttpHead(Name = "GetSeriesMetadata")]
+        public ActionResult GetSeriesMetadata(ApiVersion version)
+        {
+            return Ok();
+        }
+
+
+        [HttpOptions(Name = "GetSeriesOptions")]
+        public ActionResult GetSeriesOptions(ApiVersion version)
+        {
+            Response.Headers.Add("Allow", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+            return Ok();
+        }
+
+
+        public override ActionResult ValidationProblem(
+            [ActionResultObjectValue] ModelStateDictionary modelStateDictionary)
+        {
+            var options = HttpContext.RequestServices
+                .GetRequiredService<IOptions<ApiBehaviorOptions>>();
+            return (ActionResult)options.Value
+                .InvalidModelStateResponseFactory(ControllerContext);
+        }
+
+
+        #region Private Methods
+
+        private async Task<SeriesDetailDto> InsertSeriesAsync(SeriesForUpdateDto seriesDto)
+        {
+            var series = _mapper.Map<Series>(seriesDto);
+            await _eventHostRepository.AddSeriesAsync(series);
+            await _eventHostRepository.SaveChangesAsync();
+            return _mapper.Map<SeriesDetailDto>(series);
+        }
+
+        private async Task<SeriesAssetDto> InsertSeriesAssetAsync(Guid seriesId, AssetForUpdateDto assetDto)
+        {
+            var asset = _mapper.Map<SeriesAsset>(assetDto);
+            asset.SeriesId = seriesId;
+            await _eventHostRepository.AddSeriesAssetAsync(asset);
+            await _eventHostRepository.SaveChangesAsync();
+            return _mapper.Map<SeriesAssetDto>(asset);
+        }
+
+        #endregion
     }
 }

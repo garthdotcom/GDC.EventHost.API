@@ -1,205 +1,378 @@
 ﻿using AutoMapper;
+using GDC.EventHost.DAL.Entities;
 using GDC.EventHost.API.ResourceParameters;
 using GDC.EventHost.API.Services;
+using GDC.EventHost.Shared.SeatingPlan;
 using GDC.EventHost.Shared.Venue;
-using Microsoft.AspNetCore.Authorization;
+using GDC.EventHost.Shared.VenueAsset;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
-namespace GDC.EventHost.API.Controllers
+namespace GHC.EventHost.API.Controllers
 {
-    [Route("api/venues")]
+    [Produces("application/json", "application/xml")]
+    [Route("api/v{version:apiVersion}/venues")]
     [ApiController]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public class VenuesController : ControllerBase
+    public class VenuesController : Controller
     {
-        private readonly ILogger<VenuesController> _logger;
-        private readonly IMailService _mailService;
         private readonly IEventHostRepository _eventHostRepository;
         private readonly IMapper _mapper;
-        const int maxPageSize = 20;
 
-        public VenuesController(ILogger<VenuesController> logger,
-            IMailService mailService,
-            IEventHostRepository eventHostRepository,
-            IMapper mapper)
+        public VenuesController(IEventHostRepository eventHostRepository, IMapper mapper)
         {
-            _logger = logger ??
-                throw new ArgumentNullException(nameof(logger));
-            _mailService = mailService ??
-                throw new ArgumentNullException(nameof(mailService));
             _eventHostRepository = eventHostRepository ??
                 throw new ArgumentNullException(nameof(eventHostRepository));
+
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
+
+            _eventHostRepository = eventHostRepository;
         }
 
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<VenueDto>>> GetVenues(
-            [FromQuery] VenueResourceParameters venueResourceParameters)
+        [HttpGet(Name = "GetVenues")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<VenueDetailDto>>> GetVenues(
+            [FromQuery] VenueResourceParameters resourceParms,
+            ApiVersion version)
         {
-            var pageSize = venueResourceParameters.PageSize > maxPageSize
-                ? maxPageSize
-                : venueResourceParameters.PageSize;
+            var venuesFromRepo = await _eventHostRepository.GetVenuesAsync(resourceParms);
 
-            var (venueEntities, paginationMetadata) = await _eventHostRepository
-                .GetVenuesAsync(venueResourceParameters);
+            var venueDetailDtos = _mapper.Map<IEnumerable<VenueDetailDto>>(venuesFromRepo);
 
-            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-
-            if (venueResourceParameters.IncludeDetail)
+            foreach (var venueDetailDto in venueDetailDtos)
             {
-                return Ok(_mapper.Map<IEnumerable<VenueDetailDto>>(venueEntities));
+                foreach (var performance in venueDetailDto.Performances)
+                {
+                    performance.TicketCount = _eventHostRepository
+                        .GetPerformanceTicketCount(performance.Id);
+                }
             }
 
-            return Ok(_mapper.Map<IEnumerable<VenueDto>>(venueEntities));
+            return Ok(venueDetailDtos);
         }
 
 
-        [HttpGet("{id}", Name = "GetVenue")]
-        public async Task<ActionResult> GetVenue(Guid id, bool includeDetail = false)
+        [HttpGet("{venueId}", Name = "GetVenueById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<VenueDetailDto>> GetVenueById(Guid venueId,
+            ApiVersion version)
         {
-            var entity = await _eventHostRepository.GetVenueAsync(id, includeDetail);
+            if (venueId == Guid.Empty)
+            {
+                return BadRequest();
+            }
 
-            if (entity == null)
+            var venueFromRepo = await _eventHostRepository.GetVenueByIdAsync(venueId);
+
+            if (venueFromRepo == null)
             {
                 return NotFound();
             }
 
-            if (includeDetail)
+            var venueDetailDto = _mapper.Map<VenueDetailDto>(venueFromRepo);
+
+            foreach (var performance in venueDetailDto.Performances)
             {
-                return Ok(_mapper.Map<VenueDetailDto>(entity));
+                performance.TicketCount = _eventHostRepository
+                    .GetPerformanceTicketCount(performance.Id);
             }
 
-            return Ok(_mapper.Map<VenueDto>(entity));
+            return Ok(venueDetailDto);
         }
 
 
-        [HttpPost]
-        public async Task<ActionResult<VenueDto>> CreateVenue(
-            [FromBody] VenueForUpdateDto venueForUpdateDto)
+        [HttpGet("list", Name = "GetVenuesForList")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<VenueDto>>> GetVenuesForList(ApiVersion version)
         {
-            var newVenueEntity = _mapper.Map<Entities.Venue>(venueForUpdateDto);
+            var eventTypeFromRepo = await _eventHostRepository.GetVenuesAsync();
 
-            _eventHostRepository.AddVenue(newVenueEntity);
+            return Ok(_mapper.Map<IEnumerable<VenueDto>>(eventTypeFromRepo));
+        }
 
-            if (await _eventHostRepository.SaveChangesAsync())
+
+        [HttpPost(Name = "CreateVenue")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<VenueDetailDto>> CreateVenue(VenueForUpdateDto venueDto,
+            ApiVersion version)
+        {
+            if (venueDto == null)
             {
-                var venueToReturnDto = _mapper.Map<VenueDto>(newVenueEntity);
+                return BadRequest();
+            }
 
-                return CreatedAtRoute("GetVenue",
+            var venueToReturn = await InsertVenueAsync(venueDto);
+
+            return CreatedAtRoute("GetVenueById",
+                new
+                {
+                    venueId = venueToReturn.Id,
+                    version = $"{version}"
+                },
+                venueToReturn);
+        }
+
+
+        [HttpPut("{venueId}", Name = "UpdateVenue")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> UpdateVenue(Guid venueId, VenueForUpdateDto venueDto,
+            ApiVersion version)
+        {
+            if (venueId == Guid.Empty || venueDto == null)
+            {
+                return BadRequest();
+            }
+
+            var venueFromRepo = await _eventHostRepository
+                .GetVenueByIdAsync(venueId, false);
+
+            if (venueFromRepo == null)
+            {
+                var venueToReturn = await InsertVenueAsync(venueDto);
+
+                return CreatedAtRoute("GetVenueById",
                     new
                     {
-                        id = venueToReturnDto.Id,
-                        includeEvents = false
+                        venueId = venueToReturn.Id,
+                        version = $"{version}"
                     },
-                    venueToReturnDto);
+                    venueToReturn);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to create a new venue.");
+            _mapper.Map(venueDto, venueFromRepo);
+            //_eventHostRepository.UpdateVenue(venueFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
+            return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateVenue(
-            Guid id,
-            VenueForUpdateDto venueForUpdateDto)
-        {
-            var venueEntity = await _eventHostRepository
-                .GetVenueAsync(id, false);
 
-            if (venueEntity == null)
+        [HttpPatch("{venueId}", Name = "PartiallyUpdateVenue")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> PartiallyUpdateVenue(Guid venueId,
+            JsonPatchDocument<VenueForUpdateDto> patchDocument,
+            ApiVersion version)
+        {
+            if (venueId == Guid.Empty)
             {
-                _logger.LogInformation("Venue with id {VenueId} was not found when trying to update it.",
-                    id);
+                return BadRequest();
+            }
+
+            var venueExists = await _eventHostRepository
+                .VenueExistsAsync(venueId);
+
+            if (!venueExists)
+            {
+                var venueDto = new VenueForUpdateDto();
+
+                patchDocument.ApplyTo(venueDto, ModelState);
+
+                if (!TryValidateModel(venueDto))
+                {
+                    return ValidationProblem(ModelState);
+                }
+
+                var venueToReturn = await InsertVenueAsync(venueDto);
+
+                return CreatedAtRoute("GetVenueById",
+                    new
+                    {
+                        venueId = venueToReturn.Id,
+                        version = $"{version}"
+                    },
+                    venueToReturn);
+            }
+
+            var venueFromRepo = await _eventHostRepository
+                .GetVenueByIdAsync(venueId, false);
+
+            var venueToPatch = _mapper.Map<VenueForUpdateDto>(venueFromRepo);
+
+            patchDocument.ApplyTo(venueToPatch, ModelState);
+
+            if (!TryValidateModel(venueToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(venueToPatch, venueFromRepo);
+            //_eventHostRepository.UpdateVenue(venueFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpDelete("{venueId}", Name = "DeleteVenue")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult> DeleteVenue(Guid venueId,
+            ApiVersion version)
+        {
+            if (venueId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var venueFromRepo = await _eventHostRepository
+                .GetVenueByIdAsync(venueId, false);
+
+            if (venueFromRepo == null)
+            {
                 return NotFound();
             }
 
-            // overwrite the entity with the corresponding values in the dto
-            _mapper.Map(venueForUpdateDto, venueEntity);
+            _eventHostRepository.SoftDeleteVenue(venueFromRepo);
+            await _eventHostRepository.SaveChangesAsync();
 
-            if (await _eventHostRepository.SaveChangesAsync())
-            {
-                return NoContent();
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to update the venue with id {id}.");
+            return NoContent();
         }
 
 
-        [HttpPatch("{id}")]
-        public async Task<ActionResult> PartiallyUpdateVenue(
-            Guid id,
-            JsonPatchDocument<VenueForUpdateDto> patchDocument)
+        //*************************************************************************************
+        // Venue Assets
+        //*************************************************************************************
+
+        // the resource parms allow us to filter by asset type
+
+        [HttpGet("{venueId}/assets", Name = "GetAssetsForVenue")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<VenueAssetDto>>> GetAssetsForVenue(Guid venueId,
+            [FromQuery] AssetResourceParameters resourceParms,
+            ApiVersion version)
         {
-            var venueEntity = await _eventHostRepository
-                .GetVenueAsync(id, false);
-
-            if (venueEntity == null)
+            if (venueId == Guid.Empty)
             {
-                _logger.LogInformation("Venue with id {VenueId} was not found when trying to partially update it.", id);
-                return NotFound();
+                return BadRequest();
             }
 
-            var venueToPatchDto = _mapper.Map<VenueForUpdateDto>(venueEntity);
+            var venueAssetsFromRepo = await _eventHostRepository
+                .GetVenueAssetsAsync(venueId, resourceParms);
 
-            patchDocument.ApplyTo(venueToPatchDto, ModelState);
-
-            // check for any errors in the patch document
-            if (!ModelState.IsValid)
-            {
-                _logger.LogInformation("An issue was found in the patch document when trying to patch id {VenueId}.", id);
-                return BadRequest(ModelState);
-            }
-
-            // check for broken validation rules on the model
-            if (!TryValidateModel(venueToPatchDto))
-            {
-                _logger.LogInformation("Validation issue(s) was/were found when trying to patch id {VenueId}.", id);
-                return BadRequest(ModelState);
-            }
-
-            // overwrite the entity with the corresponding dto values
-            _mapper.Map(venueToPatchDto, venueEntity);
-
-            if (await _eventHostRepository.SaveChangesAsync())
-            {
-                return NoContent();
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to partially update the venue with id {id}.");
-
+            return Ok(_mapper.Map<IEnumerable<VenueAssetDto>>(venueAssetsFromRepo));
         }
 
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteVenue(Guid id)
+        [HttpPost("{venueId}/assets", Name = "AddAssetToVenue")]
+        [Consumes("application/json", "application/xml")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<VenueAssetDto>> AddAssetToVenue(Guid venueId,
+            VenueAssetForUpdateDto assetForUpdateDto,
+            ApiVersion version)
         {
-            var venueEntity = await _eventHostRepository
-                .GetVenueAsync(id, false);
-
-            if (venueEntity == null)
+            if (venueId == Guid.Empty || assetForUpdateDto == null)
             {
-                _logger.LogInformation("Venue with id {VenueId} was not found when trying to partially update it.", id);
-                return NotFound();
+                return BadRequest();
             }
 
-            _eventHostRepository.DeleteVenue(venueEntity);
+            var venueAssetOfTypeExists = await _eventHostRepository
+                .VenueAssetExistsAsync(venueId, assetForUpdateDto.AssetTypeId);
 
-            if (await _eventHostRepository.SaveChangesAsync())
+            if (venueAssetOfTypeExists)
             {
-                _mailService.Send($"Venue Deleted: {venueEntity.Name}",
-                $"A venue called '{venueEntity.Name}' with id '{id}' was deleted.");
-                return NoContent();
+                ModelState.AddModelError(nameof(VenueAssetForUpdateDto),
+                    $"An asset of type '{assetForUpdateDto.AssetTypeId}' currently exists for this venue.");
+                return new UnprocessableEntityObjectResult(ModelState);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"A problem occurred when trying to delete the venue '{venueEntity.Name}' with id {id}.");
+            var venueAsset = _mapper.Map<VenueAsset>(assetForUpdateDto);
+
+            venueAsset.VenueId = venueId;
+
+            await _eventHostRepository.AddVenueAssetAsync(venueAsset);
+
+            await _eventHostRepository.SaveChangesAsync();
+
+            var newVenueAssetDto = _mapper.Map<VenueAssetDto>(venueAsset);
+
+            return CreatedAtRoute("GetVenueAssetById",
+                new
+                {
+                    venueAssetId = newVenueAssetDto.Id,
+                    version = $"{version}"
+                },
+                newVenueAssetDto);
         }
 
+
+        [HttpGet("{venueId}/layouts", Name = "GetSeatingPlansForVenue")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<SeatingPlanDto>>> GetSeatingPlansForVenue(Guid venueId,
+            ApiVersion version)
+        {
+            if (venueId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var layoutsFromRepo = await _eventHostRepository
+                .GetVenueSeatingPlansAsync(venueId);
+
+            return Ok(_mapper.Map<IEnumerable<SeatingPlanDto>>(layoutsFromRepo));
+        }
+
+        //*************************************************************************************
+
+        [HttpHead(Name = "GetVenueMetadata")]
+        public ActionResult GetVenueMetadata(ApiVersion version)
+        {
+            return Ok();
+        }
+
+        [HttpOptions(Name = "GetVenueOptions")]
+        public ActionResult GetVenueOptions(ApiVersion version)
+        {
+            Response.Headers.Add("Allow", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+            return Ok();
+        }
+
+        public override ActionResult ValidationProblem(
+            [ActionResultObjectValue] ModelStateDictionary modelStateDictionary)
+        {
+            var options = HttpContext.RequestServices
+                .GetRequiredService<IOptions<ApiBehaviorOptions>>();
+            return (ActionResult)options.Value
+                .InvalidModelStateResponseFactory(ControllerContext);
+        }
+
+
+        #region Private Methods
+
+        private async Task<VenueDetailDto> InsertVenueAsync(VenueForUpdateDto venueDto)
+        {
+            var venue = _mapper.Map<Venue>(venueDto);
+            await _eventHostRepository.AddVenueAsync(venue);
+            await _eventHostRepository.SaveChangesAsync();
+            return _mapper.Map<VenueDetailDto>(venue);
+        }
+
+        private async Task<VenueAssetDto> InsertVenueAssetAsync(VenueAssetForUpdateDto assetDto)
+        {
+            var asset = _mapper.Map<VenueAsset>(assetDto);
+            await _eventHostRepository.AddVenueAssetAsync(asset);
+            await _eventHostRepository.SaveChangesAsync();
+            return _mapper.Map<VenueAssetDto>(asset);
+        }
+
+        #endregion
     }
 }
