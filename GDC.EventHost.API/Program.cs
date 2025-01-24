@@ -112,7 +112,7 @@ if (builder.Environment.IsProduction())
 }
 
 // lock down all endpoints by default
-builder.Services.AddControllers(c => c.Filters.Add(new AuthorizeFilter()));
+//builder.Services.AddControllers(c => c.Filters.Add(new AuthorizeFilter()));
 
 // //turn off the automatic claims mapping
 // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

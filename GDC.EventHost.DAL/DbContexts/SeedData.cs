@@ -49,56 +49,54 @@ namespace GDC.EventHost.DAL.DbContexts
                 var performanceId9 = new Guid("2413db0b-12ba-4b3f-abd8-6c0e9b182488");
                 var performanceId10 = new Guid("235974b9-dd2f-42cf-8039-01eb68274c96");
 
-                var assetIdLargeImage_masterworks = Guid.NewGuid();
-                var assetIdMediumImage_masterworks = Guid.NewGuid();
-                var assetIdSmallImage_masterworks = Guid.NewGuid();
-                var assetIdTinyImage_masterworks = Guid.NewGuid();
-                var assetIdLargeImage_french_cinema = Guid.NewGuid();
-                var assetIdMediumImage_french_cinema = Guid.NewGuid();
-                var assetIdSmallImage_french_cinema = Guid.NewGuid();
-                var assetIdTinyImage_french_cinema = Guid.NewGuid();
-                var assetIdLargeImage_tarantino = Guid.NewGuid();
-                var assetIdMediumImage_tarantino = Guid.NewGuid();
-                var assetIdSmallImage_tarantino = Guid.NewGuid();
-                var assetIdTinyImage_tarantino = Guid.NewGuid();
-
-                var assetIdLargeImage_neptune = Guid.NewGuid();
-                var assetIdMediumImage_neptune = Guid.NewGuid();
-                var assetIdSmallImage_neptune = Guid.NewGuid();
-                var assetIdTinyImage_neptune = Guid.NewGuid();
-                var assetIdLargeImage_egyptian = Guid.NewGuid();
-                var assetIdMediumImage_egyptian = Guid.NewGuid();
-                var assetIdSmallImage_egyptian = Guid.NewGuid();
-                var assetIdTinyImage_egyptian = Guid.NewGuid();
-                var assetIdLargeImage_benaroya = Guid.NewGuid();
-                var assetIdMediumImage_benaroya = Guid.NewGuid();
-                var assetIdSmallImage_benaroya = Guid.NewGuid();
-                var assetIdTinyImage_benaroya = Guid.NewGuid();
-
-                var assetIdLargeImage_symphony_6 = Guid.NewGuid();
-                var assetIdMediumImage_symphony_6 = Guid.NewGuid();
-                var assetIdSmallImage_symphony_6 = Guid.NewGuid();
-                var assetIdTinyImage_symphony_6 = Guid.NewGuid();
-                var assetIdLargeImage_parapluies = Guid.NewGuid();
-                var assetIdMediumImage_parapluies = Guid.NewGuid();
-                var assetIdSmallImage_parapluies = Guid.NewGuid();
-                var assetIdTinyImage_parapluies = Guid.NewGuid();
-                var assetIdLargeImage_souffle = Guid.NewGuid();
-                var assetIdMediumImage_souffle = Guid.NewGuid();
-                var assetIdSmallImage_souffle = Guid.NewGuid();
-                var assetIdTinyImage_souffle = Guid.NewGuid();
-                var assetIdLargeImage_pulp_fiction = Guid.NewGuid();
-                var assetIdMediumImage_pulp_fiction = Guid.NewGuid();
-                var assetIdSmallImage_pulp_fiction = Guid.NewGuid();
-                var assetIdTinyImage_pulp_fiction = Guid.NewGuid();
-                var assetIdLargeImage_reservoir_dogs = Guid.NewGuid();
-                var assetIdMediumImage_reservoir_dogs = Guid.NewGuid();
-                var assetIdSmallImage_reservoir_dogs = Guid.NewGuid();
-                var assetIdTinyImage_reservoir_dogs = Guid.NewGuid();
-                var assetIdLargeImage_kill_bill_1 = Guid.NewGuid();
-                var assetIdMediumImage_kill_bill_1 = Guid.NewGuid();
-                var assetIdSmallImage_kill_bill_1 = Guid.NewGuid();
-                var assetIdTinyImage_kill_bill_1 = Guid.NewGuid();
+                var assetIdLargeImage_masterworks = new Guid("940a4488-7f9a-478b-afa5-f66beb6c2d20");
+                var assetIdMediumImage_masterworks = new Guid("56491e78-448e-4e63-90b7-ab02589d47ed");
+                var assetIdSmallImage_masterworks = new Guid("097565db-01a5-4c07-9d72-02636db5b0c1");
+                var assetIdTinyImage_masterworks = new Guid("f738fb72-7d67-4a07-b8ae-96750bc46821");
+                var assetIdLargeImage_french_cinema = new Guid("15271d8e-0f9a-4baa-9b65-e9c28f5305e5");
+                var assetIdMediumImage_french_cinema = new Guid("6634b62a-3e4b-4509-a332-02c5a30ab71c");
+                var assetIdSmallImage_french_cinema = new Guid("f5b4512c-2083-48b8-a6dd-b5bafb62d64f");
+                var assetIdTinyImage_french_cinema = new Guid("1aa4254d-f55e-4637-8cb8-2fc1b9936b2d");
+                var assetIdLargeImage_tarantino = new Guid("78a92627-3576-4603-a7fd-26411e5a717d");
+                var assetIdMediumImage_tarantino = new Guid("645b9152-918a-4786-a419-d6d0a6c8f4ae");
+                var assetIdSmallImage_tarantino = new Guid("1bcb787b-f51a-493c-9aa4-a7b4f1f61ec4");
+                var assetIdTinyImage_tarantino = new Guid("56479801-a2d5-4ae8-8f5c-ece0366df9ef");
+                var assetIdLargeImage_neptune = new Guid("f2e447d6-e65d-45fb-a9d2-00dda720e037");
+                var assetIdMediumImage_neptune = new Guid("856e9a4a-8093-46c6-97ca-dafa85700f74");
+                var assetIdSmallImage_neptune = new Guid("b6758d09-9096-4435-805c-36e4030dfad3");
+                var assetIdTinyImage_neptune = new Guid("06106a73-59bf-4f48-a373-01f138009ed1");
+                var assetIdLargeImage_egyptian = new Guid("039fb631-55ac-4ea4-9fcd-37dcb5df0c50");
+                var assetIdMediumImage_egyptian = new Guid("eeea2bbf-ed97-41d6-a066-42fb778d64d7");
+                var assetIdSmallImage_egyptian = new Guid("d2b89c1f-bfe7-45b3-9179-16ec5cb30c54");
+                var assetIdTinyImage_egyptian = new Guid("0fce422b-3181-4d5f-a256-9f232b59e21a");
+                var assetIdLargeImage_benaroya = new Guid("27ff8311-f132-4d58-ad3c-53ceee23dfea");
+                var assetIdMediumImage_benaroya = new Guid("1c80f2fa-1e9c-480a-925c-51e0f048b21d");
+                var assetIdSmallImage_benaroya = new Guid("5a9aa729-7fd1-4eb3-9e53-e2ca9743ebc6");
+                var assetIdTinyImage_benaroya = new Guid("f9e69cc6-1c9e-4e8d-8af4-52ac900af8c4");
+                var assetIdLargeImage_symphony_6 = new Guid("c9accb78-eee3-4485-8e58-163ca6aba7c0");
+                var assetIdMediumImage_symphony_6 = new Guid("e3d8c178-1c36-4fbf-9f87-5d2b76a0093b");
+                var assetIdSmallImage_symphony_6 = new Guid("1ed0e6ab-5a47-478b-b865-da7326d1e6c5");
+                var assetIdTinyImage_symphony_6 = new Guid("c60327b3-7f69-4c56-8fd6-2b481dc07bc8");
+                var assetIdLargeImage_parapluies = new Guid("be016e22-4c38-45c1-887c-61101c82f810");
+                var assetIdMediumImage_parapluies = new Guid("d1a4f878-a76b-441e-a6b3-9a495f2d41d1");
+                var assetIdSmallImage_parapluies = new Guid("ea079424-da31-4cc2-81d3-242eeaae71a8");
+                var assetIdTinyImage_parapluies = new Guid("f14b8de7-6a7f-4a61-b574-9c063fd64a46");
+                var assetIdLargeImage_souffle = new Guid("e9d2ca53-79f1-4217-9d30-160fc692635b");
+                var assetIdMediumImage_souffle = new Guid("f9c94de9-cb12-452e-995b-e42676bb65b5");
+                var assetIdSmallImage_souffle = new Guid("c3b61747-204e-4bd8-a279-9d56ad4739ee");
+                var assetIdTinyImage_souffle = new Guid("c090036a-8ff8-4976-ae4d-93190cad1f4c");
+                var assetIdLargeImage_pulp_fiction = new Guid("4a960e8d-f7f7-4770-b370-467be8c937fa");
+                var assetIdMediumImage_pulp_fiction = new Guid("b879c137-0efc-4ae5-962d-5a3edeaf2615");
+                var assetIdSmallImage_pulp_fiction = new Guid("b439c77f-2d55-4bf0-bf75-1610ea8bd9fa");
+                var assetIdTinyImage_pulp_fiction = new Guid("8e62c5c0-2f35-4cdf-9cba-4f0c83b3018c");
+                var assetIdLargeImage_reservoir_dogs = new Guid("583bfa4b-4800-426e-a634-69e19bdbe6ce");
+                var assetIdMediumImage_reservoir_dogs = new Guid("646d5117-1a3c-4a2a-bc34-50a73f18c915");
+                var assetIdSmallImage_reservoir_dogs = new Guid("b14542ea-6e74-45fb-90b1-c75f5319603a");
+                var assetIdTinyImage_reservoir_dogs = new Guid("689b8a56-7e58-440a-bdff-cd8cd6eeaa25");
+                var assetIdLargeImage_kill_bill_1 = new Guid("7a0f130f-8e8a-4d9c-b4e1-bfeb23a34f0e");
+                var assetIdMediumImage_kill_bill_1 = new Guid("5193636f-2b5a-4dc9-9509-274f912d7035");
+                var assetIdSmallImage_kill_bill_1 = new Guid("993be93e-a9a5-4397-b574-d79a4eecc59a");
+                var assetIdTinyImage_kill_bill_1 = new Guid("2ff06714-66bd-4a36-a919-e48a3695a695");
 
                 #endregion
 
@@ -114,6 +112,7 @@ namespace GDC.EventHost.DAL.DbContexts
                             }
                         );
                     };
+                    await context.SaveChangesAsync();
                 }
 
                 if (!context.SeatTypes.Any())
@@ -128,6 +127,7 @@ namespace GDC.EventHost.DAL.DbContexts
                             }
                         );
                     };
+                    await context.SaveChangesAsync();
                 }
 
                 if (!context.SeatPositionTypes.Any())
@@ -142,6 +142,7 @@ namespace GDC.EventHost.DAL.DbContexts
                             }
                         );
                     };
+                    await context.SaveChangesAsync();
                 }
 
                 if (!context.TicketStatuses.Any())
@@ -156,6 +157,7 @@ namespace GDC.EventHost.DAL.DbContexts
                             }
                         );
                     };
+                    await context.SaveChangesAsync();
                 }
 
                 if (!context.AssetTypes.Any())
@@ -170,6 +172,7 @@ namespace GDC.EventHost.DAL.DbContexts
                             }
                         );
                     };
+                    await context.SaveChangesAsync();
                 }
 
                 if (!context.PerformanceTypes.Any())
@@ -827,129 +830,142 @@ namespace GDC.EventHost.DAL.DbContexts
                             Uri = "img/assets/kill_bill_1_tiny.png"
                         }
                     );
+                    await context.SaveChangesAsync();
                 }
 
                 if (!context.SeriesAssets.Any())
                 {
                     var masterworks_series = context.Series
                         .First(s => s.Id == seriesId_masterworks);
-
-                    masterworks_series?.SeriesAssets.AddRange(
-                        [
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_masterworks,
-                                AssetId = assetIdLargeImage_masterworks,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_masterworks,
-                                AssetId = assetIdMediumImage_masterworks,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_masterworks,
-                                AssetId = assetIdSmallImage_masterworks,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_masterworks,
-                                AssetId = assetIdTinyImage_masterworks,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    
+                    if (masterworks_series is not null)
+                    {
+                        context.SeriesAssets.AddRange(
+                            [
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_masterworks,
+                                    AssetId = assetIdLargeImage_masterworks,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_masterworks,
+                                    AssetId = assetIdMediumImage_masterworks,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_masterworks,
+                                    AssetId = assetIdSmallImage_masterworks,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_masterworks,
+                                    AssetId = assetIdTinyImage_masterworks,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                        await context.SaveChangesAsync();
+                    }
 
                     var french_cinema_series = context.Series
                         .First(s => s.Id == seriesId_french_cinema);
 
-                    french_cinema_series?.SeriesAssets.AddRange(
-                        [
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_french_cinema,
-                                AssetId = assetIdLargeImage_french_cinema,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_french_cinema,
-                                AssetId = assetIdMediumImage_french_cinema,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_french_cinema,
-                                AssetId = assetIdSmallImage_french_cinema,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_french_cinema,
-                                AssetId = assetIdTinyImage_french_cinema,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (french_cinema_series is not null)
+                    {
+                        context.SeriesAssets.AddRange(
+                            [
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_french_cinema,
+                                    AssetId = assetIdLargeImage_french_cinema,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_french_cinema,
+                                    AssetId = assetIdMediumImage_french_cinema,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_french_cinema,
+                                    AssetId = assetIdSmallImage_french_cinema,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_french_cinema,
+                                    AssetId = assetIdTinyImage_french_cinema,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                        await context.SaveChangesAsync();
+                    }
 
                     var tarantino_series = context.Series
                         .First(s => s.Id == seriesId_tarantino);
 
-                    tarantino_series?.SeriesAssets.AddRange(
-                        [
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_tarantino,
-                                AssetId = assetIdLargeImage_tarantino,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_tarantino,
-                                AssetId = assetIdMediumImage_tarantino,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_tarantino,
-                                AssetId = assetIdSmallImage_tarantino,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new SeriesAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                SeriesId = seriesId_tarantino,
-                                AssetId = assetIdTinyImage_tarantino,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (tarantino_series is not null)
+                    {
+                        context.SeriesAssets.AddRange(
+                            [
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_tarantino,
+                                    AssetId = assetIdLargeImage_tarantino,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_tarantino,
+                                    AssetId = assetIdMediumImage_tarantino,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_tarantino,
+                                    AssetId = assetIdSmallImage_tarantino,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new SeriesAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SeriesId = seriesId_tarantino,
+                                    AssetId = assetIdTinyImage_tarantino,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                        await context.SaveChangesAsync();
+                    }
                 }
 
                 if (!context.VenueAssets.Any())
@@ -957,122 +973,133 @@ namespace GDC.EventHost.DAL.DbContexts
                     var neptune_venue = context.Venues
                         .First(s => s.Id == venueId_neptune);
 
-                    neptune_venue?.VenueAssets.AddRange(
-                        [
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_neptune,
-                                AssetId = assetIdLargeImage_neptune,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_neptune,
-                                AssetId = assetIdMediumImage_neptune,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_neptune,
-                                AssetId = assetIdSmallImage_neptune,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_neptune,
-                                AssetId = assetIdTinyImage_neptune,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (neptune_venue is not null)
+                    {
+                        context.VenueAssets.AddRange(
+                            [
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_neptune,
+                                    AssetId = assetIdLargeImage_neptune,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_neptune,
+                                    AssetId = assetIdMediumImage_neptune,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_neptune,
+                                    AssetId = assetIdSmallImage_neptune,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_neptune,
+                                    AssetId = assetIdTinyImage_neptune,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
 
                     var egyptian_venue = context.Venues
                         .First(s => s.Id == venueId_egyptian);
 
-                    egyptian_venue?.VenueAssets.AddRange(
-                        [
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_egyptian,
-                                AssetId = assetIdLargeImage_egyptian,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_egyptian,
-                                AssetId = assetIdMediumImage_egyptian,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_egyptian,
-                                AssetId = assetIdSmallImage_egyptian,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_egyptian,
-                                AssetId = assetIdTinyImage_egyptian,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (egyptian_venue is not null)
+                    {
+                        context.VenueAssets.AddRange(
+                            [
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_egyptian,
+                                    AssetId = assetIdLargeImage_egyptian,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_egyptian,
+                                    AssetId = assetIdMediumImage_egyptian,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_egyptian,
+                                    AssetId = assetIdSmallImage_egyptian,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_egyptian,
+                                    AssetId = assetIdTinyImage_egyptian,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
 
                     var benaroya_venue = context.Venues
                         .First(s => s.Id == venueId_benaroya);
 
-                    benaroya_venue?.VenueAssets.AddRange(
-                        [
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_benaroya,
-                                AssetId = assetIdLargeImage_benaroya,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_benaroya,
-                                AssetId = assetIdMediumImage_benaroya,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_benaroya,
-                                AssetId = assetIdSmallImage_benaroya,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new VenueAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                VenueId = venueId_benaroya,
-                                AssetId = assetIdTinyImage_benaroya,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (benaroya_venue is not null)
+                    {
+                        context.VenueAssets.AddRange(
+                            [
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_benaroya,
+                                    AssetId = assetIdLargeImage_benaroya,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_benaroya,
+                                    AssetId = assetIdMediumImage_benaroya,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_benaroya,
+                                    AssetId = assetIdSmallImage_benaroya,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new VenueAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    VenueId = venueId_benaroya,
+                                    AssetId = assetIdTinyImage_benaroya,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
+
+                    await context.SaveChangesAsync();
                 }
 
                 if (!context.EventAssets.Any())
@@ -1080,242 +1107,262 @@ namespace GDC.EventHost.DAL.DbContexts
                     var symphony_6_Event = context.Events
                         .First(s => s.Id == eventId_symphony_6);
 
-                    symphony_6_Event?.EventAssets.AddRange(
-                        [
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_symphony_6,
-                                AssetId = assetIdLargeImage_symphony_6,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_symphony_6,
-                                AssetId = assetIdMediumImage_symphony_6,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_symphony_6,
-                                AssetId = assetIdSmallImage_symphony_6,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_symphony_6,
-                                AssetId = assetIdTinyImage_symphony_6,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (symphony_6_Event is not null)
+                    {
+                        context.EventAssets.AddRange(
+                            [
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_symphony_6,
+                                    AssetId = assetIdLargeImage_symphony_6,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_symphony_6,
+                                    AssetId = assetIdMediumImage_symphony_6,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_symphony_6,
+                                    AssetId = assetIdSmallImage_symphony_6,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_symphony_6,
+                                    AssetId = assetIdTinyImage_symphony_6,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
 
                     var parapluies_event = context.Events
                         .First(s => s.Id == eventId_parapluies);
 
-                    parapluies_event?.EventAssets.AddRange(
-                        [
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_parapluies,
-                                AssetId = assetIdLargeImage_parapluies,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_parapluies,
-                                AssetId = assetIdMediumImage_parapluies,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_parapluies,
-                                AssetId = assetIdSmallImage_parapluies,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_parapluies,
-                                AssetId = assetIdTinyImage_parapluies,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (parapluies_event is not null)
+                    {
+                        context.EventAssets.AddRange(
+                            [
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_parapluies,
+                                    AssetId = assetIdLargeImage_parapluies,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_parapluies,
+                                    AssetId = assetIdMediumImage_parapluies,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_parapluies,
+                                    AssetId = assetIdSmallImage_parapluies,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_parapluies,
+                                    AssetId = assetIdTinyImage_parapluies,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
 
                     var souffle_event = context.Events
                         .First(s => s.Id == eventId_souffle);
 
-                    souffle_event?.EventAssets.AddRange(
-                        [
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_souffle,
-                                AssetId = assetIdLargeImage_souffle,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_souffle,
-                                AssetId = assetIdMediumImage_souffle,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_souffle,
-                                AssetId = assetIdSmallImage_souffle,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_souffle,
-                                AssetId = assetIdTinyImage_souffle,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (souffle_event is not null)
+                    {
+                        context.EventAssets.AddRange(
+                            [
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_souffle,
+                                    AssetId = assetIdLargeImage_souffle,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_souffle,
+                                    AssetId = assetIdMediumImage_souffle,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_souffle,
+                                    AssetId = assetIdSmallImage_souffle,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_souffle,
+                                    AssetId = assetIdTinyImage_souffle,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
 
                     var pulp_fiction_Event = context.Events
                         .First(s => s.Id == eventId_pulp_fiction);
 
-                    pulp_fiction_Event?.EventAssets.AddRange(
-                        [
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_pulp_fiction,
-                                AssetId = assetIdLargeImage_pulp_fiction,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_pulp_fiction,
-                                AssetId = assetIdMediumImage_pulp_fiction,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_pulp_fiction,
-                                AssetId = assetIdSmallImage_pulp_fiction,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_pulp_fiction,
-                                AssetId = assetIdTinyImage_pulp_fiction,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (pulp_fiction_Event is not null)
+                    {
+                        context.EventAssets.AddRange(
+                            [
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_pulp_fiction,
+                                    AssetId = assetIdLargeImage_pulp_fiction,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_pulp_fiction,
+                                    AssetId = assetIdMediumImage_pulp_fiction,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_pulp_fiction,
+                                    AssetId = assetIdSmallImage_pulp_fiction,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_pulp_fiction,
+                                    AssetId = assetIdTinyImage_pulp_fiction,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
 
                     var reservoir_dogs_event = context.Events
                         .First(s => s.Id == eventId_reservoir_dogs);
 
-                    reservoir_dogs_event?.EventAssets.AddRange(
-                        [
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_reservoir_dogs,
-                                AssetId = assetIdLargeImage_reservoir_dogs,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_reservoir_dogs,
-                                AssetId = assetIdMediumImage_reservoir_dogs,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_reservoir_dogs,
-                                AssetId = assetIdSmallImage_reservoir_dogs,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_reservoir_dogs,
-                                AssetId = assetIdTinyImage_reservoir_dogs,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (reservoir_dogs_event is not null)
+                    {
+                        context.EventAssets.AddRange(
+                            [
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_reservoir_dogs,
+                                    AssetId = assetIdLargeImage_reservoir_dogs,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_reservoir_dogs,
+                                    AssetId = assetIdMediumImage_reservoir_dogs,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_reservoir_dogs,
+                                    AssetId = assetIdSmallImage_reservoir_dogs,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_reservoir_dogs,
+                                    AssetId = assetIdTinyImage_reservoir_dogs,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
 
                     var kill_bill_1_event = context.Events
                         .First(s => s.Id == eventId_kill_bill_1);
 
-                    kill_bill_1_event?.EventAssets.AddRange(
-                        [
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_kill_bill_1,
-                                AssetId = assetIdLargeImage_kill_bill_1,
-                                AssetTypeId = AssetTypeEnum.LargeImage,
-                                OrdinalValue = 1
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_kill_bill_1,
-                                AssetId = assetIdMediumImage_kill_bill_1,
-                                AssetTypeId = AssetTypeEnum.MediumImage,
-                                OrdinalValue = 2
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_kill_bill_1,
-                                AssetId = assetIdSmallImage_kill_bill_1,
-                                AssetTypeId = AssetTypeEnum.SmallImage,
-                                OrdinalValue = 3
-                            },
-                            new EventAsset()
-                            {
-                                Id = Guid.NewGuid(),
-                                EventId = eventId_kill_bill_1,
-                                AssetId = assetIdTinyImage_kill_bill_1,
-                                AssetTypeId = AssetTypeEnum.TinyImage,
-                                OrdinalValue = 4
-                            }
-                        ]
-                    );
+                    if (kill_bill_1_event is not null)
+                    {
+                        context.EventAssets.AddRange(
+                            [
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_kill_bill_1,
+                                    AssetId = assetIdLargeImage_kill_bill_1,
+                                    AssetTypeId = AssetTypeEnum.LargeImage,
+                                    OrdinalValue = 1
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_kill_bill_1,
+                                    AssetId = assetIdMediumImage_kill_bill_1,
+                                    AssetTypeId = AssetTypeEnum.MediumImage,
+                                    OrdinalValue = 2
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_kill_bill_1,
+                                    AssetId = assetIdSmallImage_kill_bill_1,
+                                    AssetTypeId = AssetTypeEnum.SmallImage,
+                                    OrdinalValue = 3
+                                },
+                                new EventAsset()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    EventId = eventId_kill_bill_1,
+                                    AssetId = assetIdTinyImage_kill_bill_1,
+                                    AssetTypeId = AssetTypeEnum.TinyImage,
+                                    OrdinalValue = 4
+                                }
+                            ]
+                        );
+                    }
+
+                    await context.SaveChangesAsync();
                 }
             }
         }
