@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using GDC.EventHost.Shared.Performance;
+using GDC.EventHost.Shared.SeatingPlan;
+using GDC.EventHost.Shared.Venue;
+using GDC.EventHost.Shared.VenueAsset;
 
 namespace GHC.EventHost.API.Controllers
 {
@@ -55,34 +59,44 @@ namespace GHC.EventHost.API.Controllers
         }
 
 
-        [HttpGet("{evtId}", Name = "GetEventById")]
+        [HttpGet("{eventId}", Name = "GetEventById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<EventDetailDto>> GetEventById(Guid evtId,
+        public async Task<ActionResult<EventDetailDto>> GetEventById(Guid eventId,
             ApiVersion version)
         {
-            if (evtId == Guid.Empty)
+            if (eventId == Guid.Empty)
             {
                 return BadRequest();
             }
 
-            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId);
+            var eventFromRepo = await _eventHostRepository.GetEventByIdAsync(eventId);
 
-            if (evtFromRepo == null)
+            if (eventFromRepo == null)
             {
                 return NotFound();
             }
 
-            var evtDto = _mapper.Map<EventDetailDto>(evtFromRepo);
+            var eventDetailDto = _mapper.Map<EventDetailDto>(eventFromRepo);
 
-            foreach (var performanceDetailDto in evtDto.Performances)
+            foreach (var asset in eventFromRepo.EventAssets)
+            {
+                eventDetailDto.EventAssets
+                    .Add(_mapper.Map<EventAssetDto>(asset));
+            }
+            foreach (var performance in eventFromRepo.Performances)
+            {
+                eventDetailDto.Performances
+                    .Add(_mapper.Map<PerformanceDetailDto>(performance));
+            }
+            foreach (var performanceDetailDto in eventDetailDto.Performances)
             {
                 performanceDetailDto.TicketCount = _eventHostRepository
                     .GetPerformanceTicketCount(performanceDetailDto.Id);
             }
 
-            return Ok(evtDto);
+            return Ok(eventDetailDto);
         }
 
 

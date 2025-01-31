@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using static GDC.EventHost.Shared.Enums;
+using GDC.EventHost.Shared.SeatingPlan;
+using GDC.EventHost.Shared.Venue;
+using GDC.EventHost.Shared.VenueAsset;
 
 namespace GDC.EventHost.API.Controllers
 {
@@ -75,6 +78,12 @@ namespace GDC.EventHost.API.Controllers
             }
 
             var performanceDetailDto = _mapper.Map<PerformanceDetailDto>(performanceFromRepo);
+
+            foreach (var asset in performanceFromRepo.PerformanceAssets)
+            {
+                performanceDetailDto.PerformanceAssets
+                    .Add(_mapper.Map<PerformanceAssetDto>(asset));
+            }
 
             performanceDetailDto.TicketCount = _eventHostRepository.
                 GetPerformanceTicketCount(performanceId);

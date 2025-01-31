@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using GDC.EventHost.Shared.Performance;
 
 namespace GHC.EventHost.API.Controllers
 {
@@ -77,6 +78,21 @@ namespace GHC.EventHost.API.Controllers
 
             var venueDetailDto = _mapper.Map<VenueDetailDto>(venueFromRepo);
 
+            foreach (var asset in venueFromRepo.VenueAssets)
+            {
+                venueDetailDto.VenueAssets
+                    .Add(_mapper.Map<VenueAssetDto>(asset));
+            }
+            foreach (var seatingPlan in venueFromRepo.SeatingPlans)
+            {
+                venueDetailDto.SeatingPlans
+                    .Add(_mapper.Map<SeatingPlanDto>(seatingPlan));
+            }
+            foreach (var performance in venueFromRepo.Performances)
+            {
+                venueDetailDto.Performances
+                    .Add(_mapper.Map<PerformanceDetailDto>(performance));
+            }
             foreach (var performance in venueDetailDto.Performances)
             {
                 performance.TicketCount = _eventHostRepository

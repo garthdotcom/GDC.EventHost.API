@@ -10,6 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using GDC.EventHost.Shared.Performance;
+using GDC.EventHost.Shared.SeatingPlan;
+using GDC.EventHost.Shared.Venue;
+using GDC.EventHost.Shared.VenueAsset;
+using GDC.EventHost.Shared.Event;
 
 namespace GHC.EventHost.API.Controllers
 {
@@ -62,6 +67,19 @@ namespace GHC.EventHost.API.Controllers
             if (seriesFromRepo == null)
             {
                 return NotFound();
+            }
+
+            var seriesDetailDto = _mapper.Map<SeriesDetailDto>(seriesFromRepo);
+
+            foreach (var asset in seriesFromRepo.SeriesAssets)
+            {
+                seriesDetailDto.SeriesAssets
+                    .Add(_mapper.Map<SeriesAssetDto>(asset));
+            }
+            foreach (var evt in seriesFromRepo.Events)
+            {
+                seriesDetailDto.Events
+                    .Add(_mapper.Map<EventDetailDto>(evt));
             }
 
             return Ok(_mapper.Map<SeriesDetailDto>(seriesFromRepo));
