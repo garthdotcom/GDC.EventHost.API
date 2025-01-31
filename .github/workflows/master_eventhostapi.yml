@@ -42,7 +42,7 @@ jobs:
              dotnet tool install dotnet-ef
 
       - name: Generate EF Core migration script
-        run: dotnet ef migrations script --idempotent --no-build --configuration Release --output sql-script.sql --context GDC.EventHost.API.DbContexts.EventHostContext --project ${{ github.workspace }}/GDC.EventHost.API/GDC.EventHost.API.csproj
+        run: dotnet ef migrations script --idempotent --no-build --configuration Release --output sql-script.sql --context GDC.EventHost.DAL.DbContexts.EventHostContext --project ${{ github.workspace }}\GDC.EventHost.DAL\GDC.EventHost.DAL.csproj --startup-project ${{ github.workspace }}\GDC.EventHost.API\GDC.EventHost.API.csproj
 
       - uses: actions/upload-artifact@v4
         with:
