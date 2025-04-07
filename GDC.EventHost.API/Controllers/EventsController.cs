@@ -80,16 +80,6 @@ namespace GHC.EventHost.API.Controllers
 
             var eventDetailDto = _mapper.Map<EventDetailDto>(eventFromRepo);
 
-            foreach (var asset in eventFromRepo.EventAssets)
-            {
-                eventDetailDto.EventAssets
-                    .Add(_mapper.Map<EventAssetDto>(asset));
-            }
-            foreach (var performance in eventFromRepo.Performances)
-            {
-                eventDetailDto.Performances
-                    .Add(_mapper.Map<PerformanceDetailDto>(performance));
-            }
             foreach (var performanceDetailDto in eventDetailDto.Performances)
             {
                 performanceDetailDto.TicketCount = _eventHostRepository
