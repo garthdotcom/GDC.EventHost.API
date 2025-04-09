@@ -88,11 +88,11 @@ namespace GHC.EventHost.API.Controllers
                 venueDetailDto.SeatingPlans
                     .Add(_mapper.Map<SeatingPlanDto>(seatingPlan));
             }
-            foreach (var performance in venueFromRepo.Performances)
-            {
-                venueDetailDto.Performances
-                    .Add(_mapper.Map<PerformanceDetailDto>(performance));
-            }
+            //foreach (var performance in venueFromRepo.Performances)
+            //{
+            //    venueDetailDto.Performances
+            //        .Add(_mapper.Map<PerformanceDetailDto>(performance));
+            //}
             foreach (var performance in venueDetailDto.Performances)
             {
                 performance.TicketCount = _eventHostRepository

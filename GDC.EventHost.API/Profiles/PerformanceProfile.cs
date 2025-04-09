@@ -30,6 +30,9 @@ namespace GDC.EventHost.API.Profiles
 
             CreateMap<PerformanceDetailDto, Performance>();
 
+            CreateMap<PerformanceForCreateDto, Performance>();
+            CreateMap<Performance, PerformanceForCreateDto>();
+
             CreateMap<PerformanceForUpdateDto, Performance>();
             CreateMap<Performance, PerformanceForUpdateDto>();
         }

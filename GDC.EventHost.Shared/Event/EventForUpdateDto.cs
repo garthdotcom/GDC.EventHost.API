@@ -20,7 +20,7 @@ namespace GDC.EventHost.Shared.Event
         public string? LongDescription { get; set; }
 
         [Display(Name = "Start Date")]
-        [DateIsFutureOrNull]
+        //[DateIsFutureOrNull]
         public DateTime? StartDate { get; set; }
 
         [Display(Name = "End Date")]
@@ -34,7 +34,7 @@ namespace GDC.EventHost.Shared.Event
         public Guid? SeriesId { get; set; }
 
         [Display(Name = "Status Id")]
-        [StatusIsValid]
+        //[StatusIsValid]
         public StatusEnum? StatusId { get; set; }
     }
 }

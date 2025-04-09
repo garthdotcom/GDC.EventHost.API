@@ -13,13 +13,14 @@ using GDC.EventHost.Shared.Performance;
 using GDC.EventHost.Shared.SeatingPlan;
 using GDC.EventHost.Shared.Venue;
 using GDC.EventHost.Shared.VenueAsset;
+using GDC.EventHost.Shared;
 
 namespace GHC.EventHost.API.Controllers
 {
     [Produces("application/json", "application/xml")]
     [Route("api/v{version:apiVersion}/events")]
     [ApiController]
-    public class EventsController : Controller
+    public class EventsController : ControllerBase
     {
         private readonly IEventHostRepository _eventHostRepository;
         private readonly IMapper _mapper;
@@ -42,20 +43,20 @@ namespace GHC.EventHost.API.Controllers
             [FromQuery] EventResourceParameters resourceParms,
             ApiVersion version)
         {
-            var evtFromRepo = await _eventHostRepository.GetEventsAsync(resourceParms);
+            var eventFromRepo = await _eventHostRepository.GetEventsAsync(resourceParms);
 
-            var evtDtos = _mapper.Map<IEnumerable<EventDetailDto>>(evtFromRepo);
+            var eventDtos = _mapper.Map<IEnumerable<EventDetailDto>>(eventFromRepo);
 
-            foreach (var evtDto in evtDtos)
+            foreach (var eventDto in eventDtos)
             {
-                foreach (var performanceDetailDto in evtDto.Performances)
+                foreach (var performanceDetailDto in eventDto.Performances)
                 {
                     performanceDetailDto.TicketCount = _eventHostRepository
                         .GetPerformanceTicketCount(performanceDetailDto.Id);
                 }
             }
 
-            return Ok(evtDtos);
+            return Ok(eventDtos);
         }
 
 
@@ -95,140 +96,140 @@ namespace GHC.EventHost.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<EventDetailDto>> CreateEvent(EventForUpdateDto evtDto,
+        public async Task<ActionResult<EventDetailDto>> CreateEvent(EventForUpdateDto eventDto,
             ApiVersion version)
         {
-            if (evtDto == null)
+            if (eventDto == null)
             {
                 return BadRequest();
             }
 
-            var evtToReturn = await InsertEventAsync(evtDto);
+            var eventToReturn = await InsertEventAsync(eventDto);
 
             return CreatedAtRoute("GetEventById",
                 new
                 {
-                    evtId = evtToReturn.Id,
+                    eventId = eventToReturn.Id,
                     version = $"{version}"
                 },
-                evtToReturn);
+                eventToReturn);
         }
 
 
-        [HttpPut("{evtId}", Name = "UpdateEvent")]
+        [HttpPut("{eventId}", Name = "UpdateEvent")]
         [Consumes("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult> UpdateEvent(Guid evtId, EventForUpdateDto evtDto,
+        public async Task<ActionResult> UpdateEvent(Guid eventId, EventForUpdateDto eventDto,
             ApiVersion version)
         {
-            if (evtId == Guid.Empty || evtDto == null)
+            if (eventId == Guid.Empty || eventDto == null)
             {
                 return BadRequest();
             }
 
-            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId);
+            var eventFromRepo = await _eventHostRepository.GetEventByIdAsync(eventId);
 
-            if (evtFromRepo == null)
+            if (eventFromRepo == null)
             {
-                var evtToReturn = await InsertEventAsync(evtDto);
+                var eventToReturn = await InsertEventAsync(eventDto);
 
                 return CreatedAtRoute("GetEventById",
                     new
                     {
-                        evtId = evtToReturn.Id,
+                        eventId = eventToReturn.Id,
                         version = $"{version}"
                     },
-                    evtToReturn);
+                    eventToReturn);
             }
 
-            _mapper.Map(evtDto, evtFromRepo);
-            //await _eventHostRepository.UpdateEventAsync(evtFromRepo);
+            _mapper.Map(eventDto, eventFromRepo);
+
             await _eventHostRepository.SaveChangesAsync();
 
             return NoContent();
         }
 
 
-        [HttpPatch("{evtId}", Name = "PartiallyUpdateEvent")]
+        [HttpPatch("{eventId}", Name = "PartiallyUpdateEvent")]
         [Consumes("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult> PartiallyUpdateEvent(Guid evtId,
+        public async Task<ActionResult> PartiallyUpdateEvent(Guid eventId,
             JsonPatchDocument<EventForUpdateDto> patchDocument,
             ApiVersion version)
         {
-            if (evtId == Guid.Empty)
+            if (eventId == Guid.Empty)
             {
                 return BadRequest();
             }
-            var eventExists = await _eventHostRepository.EventExistsAsync(evtId);
+            var eventExists = await _eventHostRepository.EventExistsAsync(eventId);
 
             if (!eventExists)
             {
-                var evtDto = new EventForUpdateDto();
+                var eventDto = new EventForUpdateDto();
 
-                patchDocument.ApplyTo(evtDto, ModelState);
+                patchDocument.ApplyTo(eventDto, ModelState);
 
-                if (!TryValidateModel(evtDto))
+                if (!TryValidateModel(eventDto))
                 {
                     return ValidationProblem(ModelState);
                 }
 
-                var evtToReturn = await InsertEventAsync(evtDto);
+                var eventToReturn = await InsertEventAsync(eventDto);
 
                 return CreatedAtRoute("GetEventById",
                     new
                     {
-                        evtId = evtToReturn.Id,
+                        eventId = eventToReturn.Id,
                         version = $"{version}"
                     },
-                    evtToReturn);
+                    eventToReturn);
             }
 
-            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId, false);
+            var eventFromRepo = await _eventHostRepository.GetEventByIdAsync(eventId, false);
 
-            var evtToPatch = _mapper.Map<EventForUpdateDto>(evtFromRepo);
+            var eventToPatch = _mapper.Map<EventForUpdateDto>(eventFromRepo);
 
-            patchDocument.ApplyTo(evtToPatch, ModelState);
+            patchDocument.ApplyTo(eventToPatch, ModelState);
 
-            if (!TryValidateModel(evtToPatch))
+            if (!TryValidateModel(eventToPatch))
             {
                 return ValidationProblem(ModelState);
             }
 
-            _mapper.Map(evtToPatch, evtFromRepo);
-            //await _eventHostRepository.UpdateEventAsync(evtFromRepo);
+            _mapper.Map(eventToPatch, eventFromRepo);
+
             await _eventHostRepository.SaveChangesAsync();
 
             return NoContent();
         }
 
 
-        [HttpDelete("{evtId}", Name = "DeleteEvent")]
+        [HttpDelete("{eventId}", Name = "DeleteEvent")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult> DeleteEvent(Guid evtId,
+        public async Task<ActionResult> DeleteEvent(Guid eventId,
             ApiVersion version)
         {
-            if (evtId == Guid.Empty)
+            if (eventId == Guid.Empty)
             {
                 return BadRequest();
             }
 
-            var evtFromRepo = await _eventHostRepository.GetEventByIdAsync(evtId, false);
+            var eventFromRepo = await _eventHostRepository.GetEventByIdAsync(eventId, false);
 
-            if (evtFromRepo == null)
+            if (eventFromRepo == null)
             {
                 return NotFound();
             }
 
-            _eventHostRepository.SoftDeleteEvent(evtFromRepo);
+            _eventHostRepository.SoftDeleteEvent(eventFromRepo);
             await _eventHostRepository.SaveChangesAsync();
 
             return NoContent();
@@ -241,39 +242,39 @@ namespace GHC.EventHost.API.Controllers
 
         // the resource parms allow us to filter by asset type
 
-        [HttpGet("{evtId}/assets", Name = "GetAssetsForEvent")]
+        [HttpGet("{eventId}/assets", Name = "GetAssetsForEvent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<EventAssetDto>>> GetAssetsForEvent(Guid evtId,
+        public async Task<ActionResult<IEnumerable<EventAssetDto>>> GetAssetsForEvent(Guid eventId,
             [FromQuery] AssetResourceParameters resourceParms,
             ApiVersion version)
         {
-            if (evtId == Guid.Empty)
+            if (eventId == Guid.Empty)
             {
                 return BadRequest();
             }
 
-            var evtAssetsFromRepo = await _eventHostRepository.GetEventAssetsAsync(evtId, resourceParms);
+            var eventAssetsFromRepo = await _eventHostRepository.GetEventAssetsAsync(eventId, resourceParms);
 
-            return Ok(_mapper.Map<IEnumerable<EventAssetDto>>(evtAssetsFromRepo));
+            return Ok(_mapper.Map<IEnumerable<EventAssetDto>>(eventAssetsFromRepo));
         }
 
 
-        [HttpPost("{evtId}/assets", Name = "AddAssetToEvent")]
+        [HttpPost("{eventId}/assets", Name = "AddAssetToEvent")]
         [Consumes("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<EventAssetDto>> AddAssetToEvent(Guid evtId,
+        public async Task<ActionResult<EventAssetDto>> AddAssetToEvent(Guid eventId,
             EventAssetForUpdateDto assetForUpdateDto,
             ApiVersion version)
         {
-            if (evtId == Guid.Empty || assetForUpdateDto == null)
+            if (eventId == Guid.Empty || assetForUpdateDto == null)
             {
                 return BadRequest();
             }
 
             var eventAssetExists = await _eventHostRepository
-                .EventAssetExistsAsync(evtId, assetForUpdateDto.AssetTypeId);
+                .EventAssetExistsAsync(eventId, assetForUpdateDto.AssetTypeId);
 
             if (eventAssetExists)
             {
@@ -282,20 +283,20 @@ namespace GHC.EventHost.API.Controllers
                 return new UnprocessableEntityObjectResult(ModelState);
             }
 
-            var evtAsset = _mapper.Map<EventAsset>(assetForUpdateDto);
+            var eventAsset = _mapper.Map<EventAsset>(assetForUpdateDto);
 
-            evtAsset.EventId = evtId;
+            eventAsset.EventId = eventId;
 
-            await _eventHostRepository.AddEventAssetAsync(evtAsset);
+            await _eventHostRepository.AddEventAssetAsync(eventAsset);
 
             await _eventHostRepository.SaveChangesAsync();
 
-            var newEventAssetDto = _mapper.Map<EventAssetDto>(evtAsset);
+            var newEventAssetDto = _mapper.Map<EventAssetDto>(eventAsset);
 
             return CreatedAtRoute("GetEventAssetById",
                 new
                 {
-                    evtAssetId = newEventAssetDto.Id,
+                    eventAssetId = newEventAssetDto.Id,
                     version = $"{version}"
                 },
                 newEventAssetDto);
@@ -332,12 +333,13 @@ namespace GHC.EventHost.API.Controllers
 
         #region Private Methods
 
-        private async Task<EventDetailDto> InsertEventAsync(EventForUpdateDto evtDto)
+        private async Task<EventDetailDto> InsertEventAsync(EventForUpdateDto eventDto)
         {
-            var evt = _mapper.Map<Event>(evtDto);
-            await _eventHostRepository.AddEventAsync(evt);
+            var eventToPersist = _mapper.Map<Event>(eventDto);
+            eventToPersist.StatusId = Enums.StatusEnum.Pending;
+            await _eventHostRepository.AddEventAsync(eventToPersist);
             await _eventHostRepository.SaveChangesAsync();
-            return _mapper.Map<EventDetailDto>(evt);
+            return _mapper.Map<EventDetailDto>(eventToPersist);
         }
 
         #endregion

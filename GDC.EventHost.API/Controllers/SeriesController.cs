@@ -15,6 +15,7 @@ using GDC.EventHost.Shared.SeatingPlan;
 using GDC.EventHost.Shared.Venue;
 using GDC.EventHost.Shared.VenueAsset;
 using GDC.EventHost.Shared.Event;
+using GDC.EventHost.Shared;
 
 namespace GHC.EventHost.API.Controllers
 {
@@ -341,6 +342,7 @@ namespace GHC.EventHost.API.Controllers
         private async Task<SeriesDetailDto> InsertSeriesAsync(SeriesForUpdateDto seriesDto)
         {
             var series = _mapper.Map<Series>(seriesDto);
+            series.StatusId = Enums.StatusEnum.Pending;
             await _eventHostRepository.AddSeriesAsync(series);
             await _eventHostRepository.SaveChangesAsync();
             return _mapper.Map<SeriesDetailDto>(series);

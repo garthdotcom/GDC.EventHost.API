@@ -97,7 +97,8 @@ namespace GDC.EventHost.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
-        public async Task<ActionResult<PerformanceDto>> CreatePerformance(PerformanceForUpdateDto performanceDto,
+        public async Task<ActionResult<PerformanceDto>> CreatePerformance(
+            PerformanceForCreateDto performanceDto,
             ApiVersion version)
         {
             if (performanceDto == null)
@@ -134,18 +135,18 @@ namespace GDC.EventHost.API.Controllers
             var performanceFromRepo = await _eventHostRepository
                 .GetPerformanceByIdAsync(performanceId);
 
-            if (performanceFromRepo == null)
-            {
-                var performanceToReturn = await InsertPerformanceAsync(performanceDto);
+            //if (performanceFromRepo == null)
+            //{
+            //    var performanceToReturn = await InsertPerformanceAsync(performanceDto);
 
-                return CreatedAtRoute("GetPerformanceById",
-                    new
-                    {
-                        performanceId = performanceToReturn.Id,
-                        version = $"{version}"
-                    },
-                    performanceToReturn);
-            }
+            //    return CreatedAtRoute("GetPerformanceById",
+            //        new
+            //        {
+            //            performanceId = performanceToReturn.Id,
+            //            version = $"{version}"
+            //        },
+            //        performanceToReturn);
+            //}
 
             _mapper.Map(performanceDto, performanceFromRepo);
             //await _eventHostRepository.UpdatePerformanceAsync(performanceFromRepo);
@@ -172,27 +173,27 @@ namespace GDC.EventHost.API.Controllers
 
             var performanceExists = await _eventHostRepository.PerformanceExistsAsync(performanceId);
 
-            if (!performanceExists)
-            {
-                var performanceDto = new PerformanceForUpdateDto();
+            //if (!performanceExists)
+            //{
+            //    var performanceDto = new PerformanceForUpdateDto();
 
-                patchDocument.ApplyTo(performanceDto, ModelState);
+            //    patchDocument.ApplyTo(performanceDto, ModelState);
 
-                if (!TryValidateModel(performanceDto))
-                {
-                    return ValidationProblem(ModelState);
-                }
+            //    if (!TryValidateModel(performanceDto))
+            //    {
+            //        return ValidationProblem(ModelState);
+            //    }
 
-                var performanceToReturn = await InsertPerformanceAsync(performanceDto);
+            //    var performanceToReturn = await InsertPerformanceAsync(performanceDto);
 
-                return CreatedAtRoute("GetPerformanceById",
-                    new
-                    {
-                        performanceId = performanceToReturn.Id,
-                        version = $"{version}"
-                    },
-                    performanceToReturn);
-            }
+            //    return CreatedAtRoute("GetPerformanceById",
+            //        new
+            //        {
+            //            performanceId = performanceToReturn.Id,
+            //            version = $"{version}"
+            //        },
+            //        performanceToReturn);
+            //}
 
             var performanceFromRepo = await _eventHostRepository
                 .GetPerformanceByIdAsync(performanceId);
@@ -481,12 +482,13 @@ namespace GDC.EventHost.API.Controllers
 
         #region Private Methods
 
-        private async Task<PerformanceDto> InsertPerformanceAsync(PerformanceForUpdateDto performanceDto)
+        private async Task<PerformanceDto> InsertPerformanceAsync(PerformanceForCreateDto performanceDto)
         {
             // update event with new start and end date if needed
-            await HandleEventDatesAsync(performanceDto.EventId, performanceDto.Date);
+            await HandleEventDatesAsync(performanceDto.EventId, performanceDto.Date.Value);
 
             var performanceItem = _mapper.Map<Performance>(performanceDto);
+            performanceItem.StatusId = StatusEnum.Pending;
             await _eventHostRepository.AddPerformanceAsync(performanceItem);
             await _eventHostRepository.SaveChangesAsync();
             return _mapper.Map<PerformanceDto>(performanceItem);
