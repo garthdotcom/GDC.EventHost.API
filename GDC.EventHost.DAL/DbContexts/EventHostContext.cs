@@ -1,10 +1,11 @@
 ﻿using GDC.EventHost.DAL.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace GDC.EventHost.DAL.DbContexts
 {
-    public class EventHostContext : DbContext
+    public class EventHostContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Series> Series { get; set; }
         public DbSet<Event> Events { get; set; }
@@ -79,9 +80,12 @@ namespace GDC.EventHost.DAL.DbContexts
 
             foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             {
-                // adding shadow properties for auditing
+                // adding shadow properties for auditing — skip Identity tables and owned types
+                var ns = entityType.ClrType.Namespace;
+                bool isIdentityType = ns != null && ns.StartsWith("Microsoft.AspNetCore.Identity");
+                bool isAppUser = entityType.ClrType == typeof(ApplicationUser);
 
-                if (!entityType.IsOwned())
+                if (!entityType.IsOwned() && !isIdentityType && !isAppUser)
                 {
                     modelBuilder.Entity(entityType.Name).Property<DateTime>("CreatedDate").IsRequired(true);
                     modelBuilder.Entity(entityType.Name).Property<string>("CreatedBy").IsRequired(true);
@@ -100,16 +104,22 @@ namespace GDC.EventHost.DAL.DbContexts
 
             foreach (var entity in ChangeTracker.Entries().Where(e => e.State == EntityState.Added))
             {
-                entity.Property("CreatedDate").CurrentValue = DateTime.Now;
-                entity.Property("CreatedBy").CurrentValue = userName;
-                entity.Property("LastUpdatedDate").CurrentValue = null;
-                entity.Property("LastUpdatedBy").CurrentValue = null;
+                if (entity.Properties.Any(p => p.Metadata.Name == "CreatedDate"))
+                {
+                    entity.Property("CreatedDate").CurrentValue = DateTime.Now;
+                    entity.Property("CreatedBy").CurrentValue = userName;
+                    entity.Property("LastUpdatedDate").CurrentValue = null;
+                    entity.Property("LastUpdatedBy").CurrentValue = null;
+                }
             }
 
             foreach (var entity in ChangeTracker.Entries().Where(e => e.State == EntityState.Modified))
             {
-                entity.Property("LastUpdatedDate").CurrentValue = DateTime.Now;
-                entity.Property("LastUpdatedBy").CurrentValue = userName;
+                if (entity.Properties.Any(p => p.Metadata.Name == "LastUpdatedDate"))
+                {
+                    entity.Property("LastUpdatedDate").CurrentValue = DateTime.Now;
+                    entity.Property("LastUpdatedBy").CurrentValue = userName;
+                }
             }
 
             return await base.SaveChangesAsync(cancellationToken);
