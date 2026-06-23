@@ -56,7 +56,7 @@ namespace GDC.EventHost.API.Services
         Task<Event?> GetEventByIdAsync(Guid eventId, bool includePast = false);
         Task<List<Performance>> GetEventPerformancesAsync(Guid eventId, bool includePast = false);
         Task<IEnumerable<Event>> GetEventsAsync(bool includePast = false);
-        Task<IEnumerable<Event>> GetEventsAsync(EventResourceParameters resourceParms, bool includePast = false);
+        Task<IEnumerable<Event>> GetEventsAsync(EventResourceParameters resourceParms);
         Task<MemberAsset?> GetMemberAssetByIdAsync(Guid memberAssetId);
         Task<List<MemberAsset>> GetMemberAssetsAsync(Guid memberId);
         Task<IEnumerable<MemberAsset>> GetMemberAssetsAsync(Guid memberId, AssetResourceParameters resourceParms);
@@ -74,7 +74,7 @@ namespace GDC.EventHost.API.Services
         Task<IEnumerable<PerformanceAsset>> GetPerformanceAssetsAsync(Guid performanceId, AssetResourceParameters resourceParms);
         Task<Performance?> GetPerformanceByIdAsync(Guid performanceId);
         Task<IEnumerable<Performance>> GetPerformancesAsync(bool includePast = false);
-        Task<IEnumerable<Performance>> GetPerformancesAsync(PerformanceResourceParameters resourceParms, bool includePast = false);
+        Task<IEnumerable<Performance>> GetPerformancesAsync(PerformanceResourceParameters resourceParms);
         PerformanceTicketCount GetPerformanceTicketCount(Guid performanceId);
         Task<List<Ticket>> GetPerformanceTicketsAsync(Guid performanceId);
         Task<PerformanceType?> GetPerformanceTypeByIdAsync(Guid performanceTypeId, bool includePast = false);

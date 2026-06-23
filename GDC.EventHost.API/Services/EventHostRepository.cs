@@ -624,15 +624,14 @@ namespace GDC.EventHost.API.Services
             return events;
         }
 
-        public async Task<IEnumerable<Event>> GetEventsAsync(EventResourceParameters resourceParms,
-            bool includePast = false)
+        public async Task<IEnumerable<Event>> GetEventsAsync(EventResourceParameters resourceParms)
         {
             ArgumentNullException.ThrowIfNull(resourceParms);
 
             var title = resourceParms.Title.FormatForSearch();
             var searchQuery = resourceParms.SearchQuery.FormatForSearch();
 
-            var eventList = await GetEventsAsync(includePast);
+            var eventList = await GetEventsAsync(resourceParms.IncludePast);
 
             if (string.IsNullOrWhiteSpace(title) &&
                 string.IsNullOrWhiteSpace(searchQuery))
@@ -895,8 +894,7 @@ namespace GDC.EventHost.API.Services
             return performanceList;
         }
 
-        public async Task<IEnumerable<Performance>> GetPerformancesAsync(PerformanceResourceParameters resourceParms,
-            bool includePast = false)
+        public async Task<IEnumerable<Performance>> GetPerformancesAsync(PerformanceResourceParameters resourceParms)
         {
             if (resourceParms == null)
             {
@@ -906,7 +904,7 @@ namespace GDC.EventHost.API.Services
             var title = resourceParms.Title.FormatForSearch();
             var searchQuery = resourceParms.SearchQuery.FormatForSearch();
 
-            var performanceList = await GetPerformancesAsync(includePast);
+            var performanceList = await GetPerformancesAsync(resourceParms.IncludePast);
 
             if (string.IsNullOrWhiteSpace(title) &&
                 string.IsNullOrWhiteSpace(searchQuery))
